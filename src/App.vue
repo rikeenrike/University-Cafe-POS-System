@@ -1,7 +1,9 @@
 <script setup>
-import cashier from './pages/cashier.vue'
+import { ref } from 'vue'
+import navigation from './pages/navigation/navigation.vue';
+
 </script>
 
 <template>
-  <cashier />
+  <navigation />
 </template>
