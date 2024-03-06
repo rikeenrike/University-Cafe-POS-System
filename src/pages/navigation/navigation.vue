@@ -5,7 +5,8 @@ const sidebarmenu = ref(false);
 </script>
 
 <template>
-    <div class="px-5 md:px-[43px] h-[80px] font-sora select-none ">
+    <div
+        class="z-10 px-5 md:px-[43px] h-[80px] flex flex-col justify-center bg-white fixed w-screen font-sora select-none ">
         <div class="flex justify-between items-center h-full">
             <div class="flex items-center space-x-1">
                 <div class="w-[57px]">
@@ -14,10 +15,10 @@ const sidebarmenu = ref(false);
                 <div class="flex items-center space-x-4">
                     <div class="hidden lg:block text-[34px] font-bold text-black">University Cafe</div>
                     <span class="hidden md:flex pl-0 lg:pl-10 space-x-4  text-darkgrey">
-                        <div>Cashier</div>
-                        <div>Kitchen</div>
-                        <div>Menu Management</div>
-                        <div>Reports</div>
+                        <div class="hover:text-black duration-100">Cashier</div>
+                        <div class="hover:text-black duration-100">Kitchen</div>
+                        <div class="hover:text-black duration-100">Menu Management</div>
+                        <div class="hover:text-black duration-100">Reports</div>
                     </span>
 
                 </div>
@@ -38,6 +39,7 @@ const sidebarmenu = ref(false);
                     </svg>
                 </div>
             </div>
+            <!-- SIDE BAR -->
             <div class="block md:hidden" @click="sidebarmenu = true">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="w-6 h-6">
@@ -46,7 +48,6 @@ const sidebarmenu = ref(false);
                 </svg>
             </div>
 
-            <!-- SIDE BAR -->
             <Sidebar v-model:visible="sidebarmenu" position="right">
                 <span class="h-full flex flex-col justify-between text-[24px] font-bold space-y-2 font-sora">
                     <div>
