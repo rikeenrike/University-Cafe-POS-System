@@ -14,12 +14,13 @@ import SelectButton from "primevue/selectbutton";
 import Accordion from "primevue/accordion";
 import AccordionTab from "primevue/accordiontab";
 import Tooltip from "primevue/tooltip";
-
+import router from "./router";
 const app = createApp(App);
 app.use(PrimeVue, {
   unstyled: true,
   pt: Lara,
 });
+app.use(router);
 app.directive("tooltip", Tooltip);
 app.component("Accordion", Accordion);
 app.component("AccordionTab", AccordionTab);

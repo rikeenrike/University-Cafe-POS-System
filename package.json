@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "primevue": "^3.49.1",
-    "vue": "^3.4.19"
+    "route": "^0.2.5",
+    "vue": "^3.4.19",
+    "vue-router": "^4.3.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",
