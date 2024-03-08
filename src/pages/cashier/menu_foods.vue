@@ -72,7 +72,7 @@ const tabs = ref([
 </script>
 
 <template>
-    <div class="h-[80%] font-sora select-none relative px-[11px] md:px-[20px] gap-[17px]">
+    <div class="h-[80%] font-sora select-none relative pr-[0px] lg:pr-[20px] gap-[17px]">
         <span class="text-lightgrey text-clamp1 font-bold space-x-10">
             <router-link to="/menu/drinks" active-class="text-black">Drinks</router-link>
             <router-link to="/menu/foods" active-class="text-black">Foods</router-link>
@@ -86,7 +86,7 @@ const tabs = ref([
             <InputText size="large" v-model="value1" placeholder="Search" class="pl-10" />
         </span>
         <!-- MENU -->
-        <div class="h-[100%] pb-[17%] pt-[1%] overflow-y-auto">
+        <div class="h-[100%] pb-[17%] mt-[1%] overflow-y-auto">
             <div v-if="tabs && tabs.length">
                 <Accordion :activeIndex="[0, 1]" :multiple="true">
                     <AccordionTab v-for="tab in tabs" :key="tab.id" :header="tab.header">
