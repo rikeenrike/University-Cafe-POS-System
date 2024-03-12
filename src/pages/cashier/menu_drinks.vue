@@ -96,14 +96,17 @@ const tabs = ref([
             <router-link to="/menu/drinks" active-class="text-black">Drinks</router-link>
             <router-link to="/menu/foods" active-class="text-black">Foods</router-link>
         </span>
-        <span class="relative flex-1">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="darkgrey"
-                class="w-[30px] h-[30px] absolute top-[25px] mt-[20px] left-[-295px] ">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                    d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-            </svg>
-            <InputText size="large" v-model="value1" placeholder="Search" class="pl-10" />
+        <span class="flex">
+            <span class="relative flex-1">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="darkgrey" class="w-[30px] h-[30px] absolute top-[20%] left-[1%] ">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                </svg>
+                <InputText size="large" v-model="value1" placeholder="Search" class="pl-10" />
+            </span>
         </span>
+
         <!-- MENU -->
         <div class=" h-[100%] pb-[17%] mt-[1%] overflow-y-auto">
             <div v-if="tabs && tabs.length">

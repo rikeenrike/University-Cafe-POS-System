@@ -13,7 +13,7 @@ import basket from './basket.vue'
                     <h1 class="text-[32px] text-black font-bold">Ready</h1>
                     <div class="flex flex-row whitespace-nowrap gap-5 overflow-x-scroll overflow-auto">
                         <div class="p-3 w-[256px] h-[99px] bg-accent rounded-[15px] text-offwhite">
-                            <p class="text-[24px] font-bold">Customer Name</p>
+                            <p class="text-[24p x] font-bold">Customer Name</p>
                             <p class="text-[16px] font-light">Order#102313</p>
                             <p class="text-[12px] font-light">Item/s: 2X</p>
                         </div>
@@ -36,7 +36,7 @@ import basket from './basket.vue'
 
         <!-- basket -->
         <div
-            class="basket hidden fixed w-svw bg-white lg:relative lg:w-auto lg:h-auto border-2 mb-1 lg:flex flex-col rounded-xl overflow-hidden">
+            class="basket hidden fixed z-20 w-full h-[80%] top-1 bg-white lg:relative lg:w-auto lg:h-auto border-2 mb-1 lg:flex flex-col rounded-lg  ">
             <basket />
         </div>
 

@@ -1,13 +1,14 @@
 <script setup>
 import { ref } from 'vue'
 
-
 var quantity = ref(1)
-
 var isEditing = ref(false)
 var customerName = ref('Customer Name')
 var additionalFees = ref(0)
+
+
 var orderType = ref(null)
+
 const setOrderType = (type) => {
     if (type === orderType.value) {
         orderType.value = null
@@ -50,6 +51,7 @@ var clearAll = () => {
 </script>
 
 <template>
+
     <!-- TOP ------------------------------------------------>
     <div class="flex items-center justify-between border-b-2 px-5 py-5">
         <!-- customer and orderid -->
@@ -76,7 +78,7 @@ var clearAll = () => {
         </Button>
     </div>
     <!-- MIDDLE ------------------------------------------------>
-    <div class="px-5 font-bold text-[20px] border-b-2 py-3 h-3/5 overflow-hidden">
+    <div class="h-3/5 px-5 font-bold text-[20px] border-b-2 py-3 lg:h-full overflow-hidden">
         <span class="flex cursor-pointer">1 item/s</span>
         <div class="pt-[20px] font-light text-[16px] text-lightgrey grid grid-cols-3">
             <p>item</p>
@@ -91,13 +93,13 @@ var clearAll = () => {
                 </div>
                 <div class="flex justify-between items-center mx-8">
                     <svg @click="increaseQuantity" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                        stroke-width="1.5" class="w-6 h-6 stroke-lightgrey active:stroke-black">
+                        stroke-width="1.5" class="w-6 h-6 cursor-pointer  stroke-lightgrey active:stroke-black">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                     </svg>
                     <p>{{ quantity }}</p>
                     <svg @click="decrementQuantity" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                        stroke-width="1.5" class="w-6 h-6 stroke-lightgrey active:stroke-black">
+                        stroke-width="1.5" class="w-6 h-6 cursor-pointer  stroke-lightgrey active:stroke-black">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                     </svg>
@@ -110,9 +112,8 @@ var clearAll = () => {
 
         </div>
     </div>
-
     <!-- BOTTOM ------------------------------------------------>
-    <div class="px-5 my-5 space-y-5">
+    <div class="bg-white h-full  px-5 my-5 space-y-5">
         <div class="flex justify-between items-center">
             <p>Additional fees</p>
             <span class="relative w-20">
@@ -184,9 +185,5 @@ var clearAll = () => {
             <p class="font-bold text-[20px]">Complete Order</p>
         </Button>
     </div>
-
-    
-
-
 
 </template>
