@@ -8,12 +8,12 @@ const routes = [
   {
     path: "/menu/foods",
     name: "Foods",
-    component: () => import("/src/pages/cashier/menu_foods.vue"),
+    component: () => import("/src/pages/cashier/cashier_menu_foods.vue"),
   },
   {
     path: "/menu/drinks",
     name: "Drinks",
-    component: () => import("/src/pages/cashier/menu_drinks.vue"),
+    component: () => import("/src/pages/cashier/cashier_menu_drinks.vue"),
   },
   //   {
   //     path: "/orderhistory",
