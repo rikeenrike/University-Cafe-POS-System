@@ -9,52 +9,52 @@ var additionalFees = ref(0);
 var orderType = ref(null);
 
 const setOrderType = (type) => {
-    if (type === orderType.value) {
-        orderType.value = null;
-        return;
-    }
-    orderType.value = type;
+  if (type === orderType.value) {
+    orderType.value = null;
+    return;
+  }
+  orderType.value = type;
 };
 
 var paymentType = ref(null);
 const setPaymentType = (type) => {
-    if (type === paymentType.value) {
-        paymentType.value = null;
-        return;
-    }
-    paymentType.value = type;
-    console.log(paymentType.value);
+  if (type === paymentType.value) {
+    paymentType.value = null;
+    return;
+  }
+  paymentType.value = type;
+  console.log(paymentType.value);
 };
 
 var increaseQuantity = () => {
-    if (quantity.value === null) {
-        return;
-    }
-    quantity.value++;
+  if (quantity.value === null) {
+    return;
+  }
+  quantity.value++;
 };
 var decrementQuantity = () => {
-    if (quantity.value === null) {
-        return;
-    }
+  if (quantity.value === null) {
+    return;
+  }
 
-    if (quantity.value === 0) {
-        //remove the item from the list
-        //return
-    }
-    quantity.value--;
+  if (quantity.value === 0) {
+    //remove the item from the list
+    //return
+  }
+  quantity.value--;
 };
 
 var clearAll = () => {
-    //clear all the items in the basket
+  //clear all the items in the basket
 };
 
 const toggleBasket = () => {
-    gsap.to(".basket", {
-        duration: 0.1,
-        display: "none",
-        ease: "power4.out",
-    });
-    console.log("basket");
+  gsap.to(".basket", {
+    duration: 0.1,
+    display: "none",
+    ease: "power4.out",
+  });
+  console.log("basket");
 };
 </script>
 

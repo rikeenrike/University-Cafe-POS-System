@@ -3,24 +3,30 @@ import { createRouter, createWebHistory } from "vue-router";
 const routes = [
   {
     path: "/",
-    redirect: "/menu/drinks",
+    redirect: "/cashier/menu/drinks",
   },
   {
-    path: "/menu/foods",
-    name: "Foods",
-    component: () => import("/src/pages/cashier/cashier_menu_foods.vue"),
+    path: "/cashier",
+    component: () => import("/src/pages/cashier/cashier.vue"),
+    redirect: "/cashier/menu/drinks", // This is now an absolute path
+    children: [
+      {
+        path: "menu/foods",
+        name: "Foods",
+        component: () => import("/src/pages/cashier/cashier_menu_foods.vue"),
+      },
+      {
+        path: "menu/drinks",
+        name: "Drinks",
+        component: () => import("/src/pages/cashier/cashier_menu_drinks.vue"),
+      },
+    ],
   },
   {
-    path: "/menu/drinks",
-    name: "Drinks",
-    component: () => import("/src/pages/cashier/cashier_menu_drinks.vue"),
+    path: "/kitchen",
+    name: "Kitchen",
+    component: () => import("/src/pages/kitchen/kitchen.vue"),
   },
-  //   {
-  //     path: "/orderhistory",
-  //     name: "OrderHistory",
-  //     component: () =>
-  //       import("/src/components/order_history_page/order_history.vue"),
-  //   },
 ];
 
 const router = createRouter({

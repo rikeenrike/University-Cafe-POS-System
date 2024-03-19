@@ -9,7 +9,6 @@ var basket = ref(false);
 let isBasketVisible = false;
 
 const toggleBasket = () => {
-
   gsap.to(".basket", {
     duration: 0.5,
     display: "block",
@@ -17,6 +16,17 @@ const toggleBasket = () => {
   });
   console.log("basket");
 };
+
+const menu = ref();
+const toggle = (event) => {
+  menu.value.toggle(event);
+  console.log("toggle");
+};
+const items = ref([
+  {
+    label: "Logout",
+  },
+]);
 </script>
 
 <template>
@@ -30,8 +40,8 @@ const toggleBasket = () => {
                 <div class="flex items-center space-x-4">
                     <div class="hidden lg:block text-[34px] font-bold text-black">University Cafe</div>
                     <span class="hidden md:flex cursor-pointer  pl-0 lg:pl-10 space-x-4  text-darkgrey">
-                        <div class="hover:text-black duration-100">Cashier</div>
-                        <div class="hover:text-black duration-100">Kitchen</div>
+                        <router-link to="/cashier" active-class="text-black" class="hover:text-black duration-100">Cashier</router-link>
+                        <router-link to="/kitchen" active-class="text-black" class="hover:text-black duration-100">Kitchen</router-link>
                         <div class="hover:text-black duration-100">Menu Management</div>
                         <div class="hover:text-black duration-100">Reports</div>
                     </span>
@@ -53,7 +63,7 @@ const toggleBasket = () => {
             </div>
 
             <!-- account  -->
-            <div class="hidden md:flex items-center space-x-2">
+            <div class="hidden md:flex items-center space-x-2" @click="toggle">
                 <div>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="w-[20px] h-[20px]">
@@ -68,6 +78,7 @@ const toggleBasket = () => {
                         <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                     </svg>
                 </div>
+                <Menu ref="menu" id="overlay_menu" :model="items" :popup="true" />
             </div>
 
 

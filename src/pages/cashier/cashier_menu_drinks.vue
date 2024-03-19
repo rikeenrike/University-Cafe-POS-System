@@ -1,112 +1,102 @@
 <script setup>
-import { ref } from 'vue';
+import { ref } from "vue";
 const selectedfilter = ref();
 const filterOnSide = ref(false);
-const value1 = ref('');
+const value1 = ref("");
 const filter = ref([
-    { filter: 'Favorites', icon: 'ph:heart-fill', value: 'Left' },
-    { filter: 'Bestsellers', icon: 'ph:seal-check-fill', value: 'Right' },
+  { filter: "Favorites", icon: "ph:heart-fill", value: "Left" },
+  { filter: "Bestsellers", icon: "ph:seal-check-fill", value: "Right" },
 ]);
 const tabs = ref([
-    {
-        id: 1,
-        name: 'hotcoffees',
-        header: 'Hot Coffees',
-        items: [
-            { id: 1, name: 'Caffe Americano', price: 60, isBestseller: true },
-            { id: 2, name: 'Caffe Latte', price: 75, isBestseller: false },
-            { id: 3, name: 'Coffee Cappuccino', price: 65, isBestseller: false },
-            { id: 4, name: 'Latte Macchiato', price: 75, isBestseller: true },
-            { id: 5, name: 'Caffe Mocha', price: 80, isBestseller: false },
-        ],
-    },
-    {
-        id: 2,
-        name: 'flavoredcoffees',
-        header: 'Flavored Coffees',
-        items: [
-            { id: 1, name: 'Caramel Macchiato', price: 80, isBestseller: false },
-            { id: 2, name: 'Mocha Chocolate', price: 80, isBestseller: false },
-        ],
-    },
-    {
-        id: 3,
-        name: 'milkteas',
-        header: 'Milk Teas',
-        items: [
-            { id: 1, name: 'Wintermelon', price: 45, isBestseller: false },
-            { id: 2, name: 'Okinawa', price: 45, isBestseller: true },
-            { id: 3, name: 'Mango', price: 45, isBestseller: true },
-            { id: 4, name: 'Oreo', price: 45, isBestseller: true },
-            { id: 5, name: 'Caramel', price: 45, isBestseller: false },
-            { id: 6, name: 'Chocolate', price: 50, isBestseller: false },
-        ],
-    },
-    {
+  {
+    id: 1,
+    name: "hotcoffees",
+    header: "Hot Coffees",
+    items: [
+      { id: 1, name: "Caffe Americano", price: 60, isBestseller: true },
+      { id: 2, name: "Caffe Latte", price: 75, isBestseller: false },
+      { id: 3, name: "Coffee Cappuccino", price: 65, isBestseller: false },
+      { id: 4, name: "Latte Macchiato", price: 75, isBestseller: true },
+      { id: 5, name: "Caffe Mocha", price: 80, isBestseller: false },
+    ],
+  },
+  {
+    id: 2,
+    name: "flavoredcoffees",
+    header: "Flavored Coffees",
+    items: [
+      { id: 1, name: "Caramel Macchiato", price: 80, isBestseller: false },
+      { id: 2, name: "Mocha Chocolate", price: 80, isBestseller: false },
+    ],
+  },
+  {
+    id: 3,
+    name: "milkteas",
+    header: "Milk Teas",
+    items: [
+      { id: 1, name: "Wintermelon", price: 45, isBestseller: false },
+      { id: 2, name: "Okinawa", price: 45, isBestseller: true },
+      { id: 3, name: "Mango", price: 45, isBestseller: true },
+      { id: 4, name: "Oreo", price: 45, isBestseller: true },
+      { id: 5, name: "Caramel", price: 45, isBestseller: false },
+      { id: 6, name: "Chocolate", price: 50, isBestseller: false },
+    ],
+  },
+  {
+    id: 4,
+    name: "blendedfrappes",
+    header: "Blended Frappes",
+    items: [
+      { id: 1, name: "Strawberry", price: 85, isBestseller: false },
+      { id: 2, name: "Cookies n Cream", price: 85, isBestseller: false },
+      { id: 3, name: "Mocha", price: 85, isBestseller: true },
+      { id: 4, name: "Ube", price: 85, isBestseller: true },
+      { id: 5, name: "Chocolate", price: 90, isBestseller: false },
+      { id: 6, name: "Mango", price: 85, isBestseller: true },
+    ],
+  },
+  {
+    id: 5,
+    name: "icedcoffees",
+    header: "Iced Coffees",
+    items: [
+      { id: 1, name: "Cafe Latte", price: 75, isBestseller: true },
+      { id: 2, name: "Caramel Macchiato", price: 85, isBestseller: false },
+      { id: 3, name: "Cafe Mocha", price: 85, isBestseller: true },
+      { id: 4, name: "Cafe Americano", price: 70, isBestseller: false },
+      { id: 5, name: "Cappuccino", price: 85, isBestseller: false },
+    ],
+  },
+  {
+    id: 6,
+    name: "chocolates",
+    header: "Chocolates",
+    items: [
+      { id: 1, name: "Hot Chocolate", price: 60, isBestseller: true },
+      { id: 2, name: "Cold Chocolate", price: 70, isBestseller: false },
+    ],
+  },
+  {
+    id: 7,
+    name: "freshjuices",
+    header: "Fresh Juices",
+    items: [
+      { id: 1, name: "Apple", price: 55, isBestseller: true },
+      { id: 2, name: "Carrot", price: 55, isBestseller: false },
+      { id: 3, name: "Mango", price: 55, isBestseller: false },
+      {
         id: 4,
-        name: 'blendedfrappes',
-        header: 'Blended Frappes',
-        items: [
-            { id: 1, name: 'Strawberry', price: 85, isBestseller: false },
-            { id: 2, name: 'Cookies n Cream', price: 85, isBestseller: false },
-            { id: 3, name: 'Mocha', price: 85, isBestseller: true },
-            { id: 4, name: 'Ube', price: 85, isBestseller: true },
-            { id: 5, name: 'Chocolate', price: 90, isBestseller: false },
-            { id: 6, name: 'Mango', price: 85, isBestseller: true },
-        ],
-    },
-    {
-        id: 5,
-        name: 'icedcoffees',
-        header: 'Iced Coffees',
-        items: [
-            { id: 1, name: 'Cafe Latte', price: 75, isBestseller: true },
-            { id: 2, name: 'Caramel Macchiato', price: 85, isBestseller: false },
-            { id: 3, name: 'Cafe Mocha', price: 85, isBestseller: true },
-            { id: 4, name: 'Cafe Americano', price: 70, isBestseller: false },
-            { id: 5, name: 'Cappuccino', price: 85, isBestseller: false },
-        ],
-    },
-    {
-        id: 6,
-        name: 'chocolates',
-        header: 'Chocolates',
-        items: [
-            { id: 1, name: 'Hot Chocolate', price: 60, isBestseller: true },
-            { id: 2, name: 'Cold Chocolate', price: 70, isBestseller: false },
-        ],
-    },
-    {
-        id: 7,
-        name: 'freshjuices',
-        header: 'Fresh Juices',
-        items: [
-            { id: 1, name: 'Apple', price: 55, isBestseller: true },
-            { id: 2, name: 'Carrot', price: 55, isBestseller: false },
-            { id: 3, name: 'Mango', price: 55, isBestseller: false },
-            { id: 4, name: 'Apple Carrot (Double Fruit)', price: 70, isBestseller: false },
-        ],
-    },
+        name: "Apple Carrot (Double Fruit)",
+        price: 70,
+        isBestseller: false,
+      },
+    ],
+  },
 ]);
 </script>
 
 <template>
     <div class="h-[80%] font-sora select-none relative pr-[0px] lg:pr-[20px] gap-[17px]">
-        <span class="text-lightgrey text-clamp1 font-bold space-x-10">
-            <router-link to="/menu/drinks" active-class="text-black">Drinks</router-link>
-            <router-link to="/menu/foods" active-class="text-black">Foods</router-link>
-        </span>
-        <span class="flex">
-            <span class="relative flex-1">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="darkgrey" class="w-[30px] h-[30px] absolute top-[20%] left-[1%] ">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                </svg>
-                <InputText size="large" v-model="value1" placeholder="Search" class="pl-10" />
-            </span>
-        </span>
-
         <!-- MENU -->
         <div class=" h-[100%] pb-[17%] mt-[1%] overflow-y-auto">
             <div v-if="tabs && tabs.length">
