@@ -15,6 +15,10 @@ import Accordion from "primevue/accordion";
 import AccordionTab from "primevue/accordiontab";
 import Tooltip from "primevue/tooltip";
 import router from "./router";
+import InputNumber from 'primevue/inputnumber';
+import Toast from 'primevue/toast';
+import ToastService from 'primevue/toastservice';
+
 const app = createApp(App);
 app.use(PrimeVue, {
   unstyled: true,
@@ -32,4 +36,7 @@ app.component("Badge", Badge);
 app.directive("badge", BadgeDirective);
 app.component("Sidebar", Sidebar);
 app.component("Menu", Menu);
+app.component("InputNumber", InputNumber);
+app.use(ToastService);
+app.component('Toast', Toast);
 app.mount("#app");

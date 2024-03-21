@@ -19,10 +19,10 @@ export default {
         root: ({ parent, context }) => ({
             class: [
                 // Display
-                'flex flex-auto',
+                'flex flex-auto w-full',
 
                 // Font
-                'font-sans leading-none',
+                'font-sora leading-none',
 
                 //Text
                 { 'text-center': parent.props.showButtons && parent.props.buttonLayout == 'vertical' },

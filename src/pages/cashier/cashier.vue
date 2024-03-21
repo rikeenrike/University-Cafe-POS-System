@@ -3,12 +3,17 @@ import basket from "./cashier_basket.vue";
 import { ref } from "vue";
 const orderReady = ref([]);
 const orderOngoing = ref([]);
+const search = ref("");
+
+
+
 </script>
 
 <template>
   <div
-    class="px-5 relative md:px-[43px] lg:grid lg:grid-cols-[2fr,2fr] xl:grid-cols-[2fr,.7fr] font-sora select-none top-[80px]"
+    class="px-5 relative md:px-[43px] lg:grid lg:grid-cols-[2fr,2fr] xl:grid-cols-[2fr,.8fr] font-sora select-none top-[80px]"
     style="height: calc(100vh - 80px)">
+    
     <div class="flex flex-col overflow-hidden">
       <!-- status -->
       <div class="flex pr-[20px] h-[180px] gap-2">
@@ -49,21 +54,21 @@ const orderOngoing = ref([]);
           </div>
         </div>
       </div>
-        <!-- search  -->
+      <!-- search  -->
       <span class="text-lightgrey text-clamp1 font-bold space-x-10">
         <router-link to="/cashier/menu/drinks" active-class="text-black">Drinks</router-link>
         <router-link to="/cashier/menu/foods" active-class="text-black">Foods</router-link>
       </span>
-   
-        <span class="mr-0 lg:mr-5 flex relative flex-1">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="darkgrey"
-            class="w-[30px] h-[30px] absolute top-[20%] left-[.5%] ">
-            <path stroke-linecap="round" stroke-linejoin="round"
-              d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-          </svg>
-          <InputText size="large" v-model="value1" placeholder="Search" class="pl-10" />
-        </span>
-       <!-- menu -->
+
+      <span class="mr-0 lg:mr-5 flex relative flex-1">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="darkgrey"
+          class="w-[30px] h-[30px] absolute top-[20%] left-[.5%] ">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+        </svg>
+        <InputText size="large" v-model="search" placeholder="Search" class="pl-10" />
+      </span>
+      <!-- menu -->
       <router-view />
     </div>
 

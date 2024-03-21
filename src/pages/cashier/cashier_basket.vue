@@ -1,6 +1,10 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { gsap } from "gsap";
+import { UserOrder } from "/src/db/dummydb.js";
+import { useToast } from "primevue/usetoast";
+
+const toast = useToast();
 var quantity = ref(1);
 var isEditing = ref(false);
 var customerName = ref("Customer Name");
@@ -9,53 +13,80 @@ var additionalFees = ref(0);
 var orderType = ref(null);
 
 const setOrderType = (type) => {
-  if (type === orderType.value) {
-    orderType.value = null;
-    return;
-  }
-  orderType.value = type;
+    if (type === orderType.value) {
+        orderType.value = null;
+        return;
+    }
+    orderType.value = type;
 };
 
 var paymentType = ref(null);
 const setPaymentType = (type) => {
-  if (type === paymentType.value) {
-    paymentType.value = null;
-    return;
-  }
-  paymentType.value = type;
-  console.log(paymentType.value);
+    if (type === paymentType.value) {
+        paymentType.value = null;
+        return;
+    }
+    paymentType.value = type;
+    console.log(paymentType.value);
 };
 
-var increaseQuantity = () => {
-  if (quantity.value === null) {
-    return;
-  }
-  quantity.value++;
+var increaseQuantity = (item) => {
+    if (item.quantity === null) {
+        return;
+    }
+    item.quantity++
+    updateSubTotal();
 };
-var decrementQuantity = () => {
-  if (quantity.value === null) {
-    return;
-  }
+var decrementQuantity = (item) => {
+    if (item.quantity === null) {
+        return;
+    }
 
-  if (quantity.value === 0) {
-    //remove the item from the list
-    //return
-  }
-  quantity.value--;
+    item.quantity--
+
+    if (item.quantity === 0) {
+        const index = UserOrder.value.indexOf(item);
+        UserOrder.value.splice(index, 1);
+    }
+    updateSubTotal();
 };
+
+var updateSubTotal = () => {
+    UserOrder.value.forEach((item) => {
+        item.total = item.quantity * item.price;
+    });
+};
+
+
+const calculateTotal = computed(() => {
+    let itemsTotal = UserOrder.value.reduce((total, item) => total + (item.price * item.quantity), 0);
+    return itemsTotal + additionalFees.value;
+});
+
+let totalItems = computed(() => {
+    return UserOrder.value.reduce((total, item) => total + item.quantity, 0);
+});
 
 var clearAll = () => {
-  //clear all the items in the basket
+    UserOrder.value = [];
+    additionalFees.value = 0;
+    orderType.value = null;
+    paymentType.value = null;
+    customerName.value = "Customer Name";
+    isEditing.value = false;
+    console.log("clear");
+    toast.add({ severity: 'error', summary: 'Payment Method not selected!', detail: 'Please select a payment method.', group: 'bc', life: 2000 });
 };
 
 const toggleBasket = () => {
-  gsap.to(".basket", {
-    duration: 0.1,
-    display: "none",
-    ease: "power4.out",
-  });
-  console.log("basket");
+    gsap.to(".basket", {
+        duration: 0.1,
+        display: "none",
+        ease: "power4.out",
+    });
+    console.log("basket");
 };
+
 </script>
 
 <template>
@@ -83,43 +114,55 @@ const toggleBasket = () => {
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
                     </svg>
-                    <p class="text-darkgrey text-[14px] group-hover:text-accent">clear</p>
+                    <p class="text-darkgrey text-[14px] group-hover:text-accent">clear all</p>
                 </Button>
             </div>
             <!-- MIDDLE ------------------------------------------------>
             <div class="px-5 font-bold text-[20px] border-b-2 py-3 lg:h-full overflow-hidden">
-                <span class="flex cursor-pointer">1 item/s</span>
-                <div class="pt-[20px] font-light text-[16px] text-lightgrey grid grid-cols-3">
+                <span class="flex cursor-pointer">{{ totalItems }} item/s</span>
+                <div class="pt-[20px] font-light text-[16px] text-lightgrey grid grid-cols-3 pr-4">
                     <p>item</p>
                     <p class="flex justify-center">qty</p>
                     <p class="flex justify-end">subtotal</p>
                 </div>
-                <div class="pt-2 flex flex-col h-[70%] space-y-2 overflow-y-auto">
+                <div v-if="UserOrder.length && UserOrder"
+                    class="pt-2 flex flex-col h-[190px] space-y-2 overflow-y-auto">
                     <!-- RETURN THIS, NOT SCROLLING WHEN USED SCROLL WHEEL  -->
-                    <div class="grid grid-cols-3 text-[16px] font-normal">
+                    <div v-for="(item, index) in UserOrder" :key="index"
+                        class="grid grid-cols-3 text-[16px] font-normal">
+                        <!-- item -->
                         <div class="flex gap-1 items-center">
-                            <p class="text-left">Product Name</p>
+                            <p class="text-left">{{ item.name }}</p>
                         </div>
-                        <div class="flex justify-between items-center mx-8">
-                            <svg @click="increaseQuantity" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        <!-- quantity -->
+                        <div class="flex justify-between items-center  mx-6">
+                            <svg @click="increaseQuantity(item)" xmlns="http://www.w3.org/2000/svg" fill="none"
                                 viewBox="0 0 24 24" stroke-width="1.5"
                                 class="w-6 h-6 cursor-pointer stroke-lightgrey active:stroke-black">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                             </svg>
-                            <p>{{ quantity }}</p>
-                            <svg @click="decrementQuantity" xmlns="http://www.w3.org/2000/svg" fill="none"
+
+                            <p>{{ item.quantity }}</p>
+
+                            <svg @click="decrementQuantity(item)" xmlns="http://www.w3.org/2000/svg" fill="none"
                                 viewBox="0 0 24 24" stroke-width="1.5"
                                 class="w-6 h-6 cursor-pointer stroke-lightgrey active:stroke-black">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                             </svg>
                         </div>
-                        <div class="flex justify-end items-center pl-[60px]">
-                            <p class="absolute right-[135px]">₱</p>
-                            <p>100.00</p>
+                        <!-- subtotal -->
+                        <div class="flex justify-between items-center pl-12 ">
+                            <p>₱</p>
+                            <p>{{ item.total }}.00</p>
                         </div>
                     </div>
+
+                </div>
+                <div v-else
+                    class="text-lightgrey pt-2 flex flex-col justify-center items-center h-[190px] space-y-2 overflow-y-auto">
+                    <p>No Items</p>
                 </div>
             </div>
             <!-- BOTTOM ------------------------------------------------>
@@ -127,12 +170,12 @@ const toggleBasket = () => {
                 <div class="flex justify-between items-center">
                     <p>Additional fees</p>
                     <span class="relative w-20">
-                        <InputText size="small" v-model="additionalFees" placeholder="₱" />
+                        <InputNumber size="small" v-model="additionalFees" placeholder="₱" />
                     </span>
                 </div>
                 <div class="flex justify-between font-bold text-[20px]">
                     <p>Total Price</p>
-                    <p>₱ 100.00</p>
+                    <p>₱ {{ calculateTotal }}.00</p>
                 </div>
                 <div>
                     <p class="text-[14px] font-light">Order type</p>
@@ -229,7 +272,7 @@ const toggleBasket = () => {
             <!-- MIDDLE ------------------------------------------------>
             <div class="flex flex-col flex-grow px-5 font-bold text-[20px] border-b-2 py-3 overflow-hidden">
                 <span class="flex justify-between items-center">
-                    <span class="flex cursor-pointer">1 item/s</span>
+                    <span class="flex cursor-pointer">{{ totalItems }} item/s</span>
                     <!-- clear button -->
                     <Button @click="clearAll" label="Primary" class="group flex flex-col bg-transparent">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -237,7 +280,7 @@ const toggleBasket = () => {
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
                         </svg>
-                        <p class="text-darkgrey text-[14px] group-hover:text-accent">clear</p>
+                        <p class="text-darkgrey text-[14px] group-hover:text-accent">clear all</p>
                     </Button>
                 </span>
 
@@ -248,28 +291,29 @@ const toggleBasket = () => {
                 </div>
                 <div class="pt-2 flex flex-col h-[70%] space-y-2 overflow-y-auto">
                     <!-- RETURN THIS, NOT SCROLLING WHEN USED SCROLL WHEEL  -->
-                    <div class="grid grid-cols-3 text-[16px] font-normal">
+                    <div v-for="(item, index) in UserOrder" :key="index"
+                        class="grid grid-cols-3 text-[16px] font-normal">
                         <div class="flex gap-1 items-center">
-                            <p class="text-left">Product Name</p>
+                            <p class="text-left">{{ item.name }}</p>
                         </div>
                         <div class="flex justify-between items-center mx-8">
-                            <svg @click="increaseQuantity" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            <svg @click="increaseQuantity(item)" xmlns="http://www.w3.org/2000/svg" fill="none"
                                 viewBox="0 0 24 24" stroke-width="1.5"
                                 class="w-6 h-6 cursor-pointer stroke-lightgrey active:stroke-black">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                             </svg>
-                            <p>{{ quantity }}</p>
-                            <svg @click="decrementQuantity" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            <p>{{ item.quantity }}</p>
+                            <svg @click="decrementQuantity(item)" xmlns="http://www.w3.org/2000/svg" fill="none"
                                 viewBox="0 0 24 24" stroke-width="1.5"
                                 class="w-6 h-6 cursor-pointer stroke-lightgrey active:stroke-black">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                             </svg>
                         </div>
-                        <div class="flex justify-end items-center pl-[60px]">
-                            <p class="absolute right-[135px]">₱</p>
-                            <p>100.00</p>
+                        <div class="flex justify-between items-center pl-12 ">
+                            <p>₱</p>
+                            <p>{{ item.total }}.00</p>
                         </div>
                     </div>
                 </div>
@@ -279,12 +323,12 @@ const toggleBasket = () => {
                 <div class="flex justify-between items-center">
                     <p>Additional fees</p>
                     <span class="relative w-20">
-                        <InputText size="small" v-model="additionalFees" placeholder="₱" />
+                        <InputNumber size="small" v-model="additionalFees" placeholder="₱" />
                     </span>
                 </div>
                 <div class="flex justify-between font-bold text-[20px]">
                     <p>Total Price</p>
-                    <p>₱ 100.00</p>
+                    <p>₱ {{ calculateTotal }}.00</p>
                 </div>
                 <div>
                     <p class="text-[14px] font-light">Order type</p>
