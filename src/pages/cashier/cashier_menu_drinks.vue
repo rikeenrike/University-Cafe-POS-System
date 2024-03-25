@@ -1,37 +1,22 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { UserOrder } from "/src/db/dummydb.js";
-import basket from "./cashier_basket.vue";
-
-const fetchOrder = ref(UserOrder);
-const addToCart = (item) => {
-  if (!fetchOrder.value.find((i) => i.name === item.name)) {
-    const newId = fetchOrder.value.length > 0 ? Math.max(...fetchOrder.value.map((c) => c.id)) + 1 : 1;
-    const newItem = {
-      id: newId,
-      name: item.ProductName,
-      price: item.UnitPrice,
-      quantity: 1,
-      total: item.UnitPrice,
-    };
-    fetchOrder.value.push(newItem);
-    console.log(fetchOrder.value);
-  } else {
-    return;
-  }
-};
+import { addToCart } from "./assets/orders.js";
+import menuloading from "../loading-comps/menuloading.vue";
 
 const products = ref([]);
+const loading = ref(true);
 const fetchsuccess = ref(true);
+
 const fetchProducts = async () => {
   try {
-    const response = await fetch("http://127.0.0.1:8000/api/products/subcategories");
+    const response = await fetch("http://127.0.0.1:8000/api/products/maincategories/1");
     products.value = await response.json();
     fetchsuccess.value = true;
-
   } catch (error) {
     console.error(error);
     fetchsuccess.value = false;
+  } finally {
+    loading.value = false;
   }
 }
 
@@ -42,14 +27,17 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="h-[80%] font-sora select-none relative pr-[0px] lg:pr-[20px] gap-[17px]">
+  <div class=" font-sora select-none relative pr-[0px] lg:pr-[20px] gap-[17px]" style="height: calc(100vh - 400px)">
     <!-- MENU -->
-    <div class=" h-[100%] pb-[17%] mt-[1%] overflow-y-auto">
+    <div class=" h-full  mt-[1%] overflow-y-auto">
+      <!-- loading animation -->
+      <div v-if="loading">
+        <menuloading />
+      </div>
       <div v-if="fetchsuccess">
         <Accordion :activeIndex="[0, 1]" :multiple="true">
           <AccordionTab v-for="tab in products" :key="tab.id" :header="tab.header">
             <div class="-space-x-5 flex overflow-x-auto sm:space-x-1">
-
               <!-- item -->
               <div v-for="item in tab.items" :key="item.id" @click="addToCart(item)"
                 class="flex items-center cursor-pointer">

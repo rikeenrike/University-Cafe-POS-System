@@ -18,6 +18,8 @@ import router from "./router";
 import InputNumber from 'primevue/inputnumber';
 import Toast from 'primevue/toast';
 import ToastService from 'primevue/toastservice';
+import Skeleton from 'primevue/skeleton';
+import ProgressSpinner from 'primevue/progressspinner';
 
 const app = createApp(App);
 app.use(PrimeVue, {
@@ -37,6 +39,8 @@ app.directive("badge", BadgeDirective);
 app.component("Sidebar", Sidebar);
 app.component("Menu", Menu);
 app.component("InputNumber", InputNumber);
+app.component("Skeleton", Skeleton);
 app.use(ToastService);
 app.component('Toast', Toast);
+app.component('ProgressSpinner', ProgressSpinner);
 app.mount("#app");

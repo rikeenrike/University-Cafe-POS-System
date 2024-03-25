@@ -1,11 +1,46 @@
 <script setup>
 import basket from "./cashier_basket.vue";
-import { ref } from "vue";
+import { ref, onMounted, computed } from "vue";
+import { addToCart } from "./assets/orders.js";
+
 const orderReady = ref([]);
 const orderOngoing = ref([]);
 const search = ref("");
 
+var productdata = ref([]);
+const fetchproducts = async () => {
+  try {
+    const response = await fetch("http://127.0.0.1:8000/api/products");
+    productdata.value = await response.json();
+    console.log(productdata.value);
+  } catch (error) {
+    console.log(error);
+  }
+};
 
+const filteredResults = ref([]);
+
+const filteredData = computed(() => {
+  if (!search.value) {
+    return productdata.value;
+  }
+
+  return filteredResults.value;
+});
+
+const filterData = () => {
+  if (!productdata.value) {
+    isloading.value = false;
+    return;
+  }
+  filteredResults.value = productdata.value.filter(item =>
+    item.ProductName.toLowerCase().includes(search.value.toLowerCase())
+  );
+};
+
+onMounted(() => {
+  fetchproducts();
+});
 
 </script>
 
@@ -13,10 +48,10 @@ const search = ref("");
   <div
     class="px-5 relative md:px-[43px] lg:grid lg:grid-cols-[2fr,2fr] xl:grid-cols-[2fr,.8fr] font-sora select-none top-[80px]"
     style="height: calc(100vh - 80px)">
-    
+
     <div class="flex flex-col overflow-hidden">
       <!-- status -->
-      <div class="flex pr-[20px] h-[180px] gap-2">
+      <div class="flex pr-[20px] h-[151px] gap-2">
         <!-- Ready Section -->
         <div class="w-full xl:flex xl:w-1/2 flex-col justify-evenly">
           <h1 class="text-[32px] text-black font-bold">Ready</h1>
@@ -55,21 +90,41 @@ const search = ref("");
         </div>
       </div>
       <!-- search  -->
-      <span class="text-lightgrey text-clamp1 font-bold space-x-10">
-        <router-link to="/cashier/menu/drinks" active-class="text-black">Drinks</router-link>
-        <router-link to="/cashier/menu/foods" active-class="text-black">Foods</router-link>
+      <span class="mr-0 lg:mr-5 flex relative ">
+        <InputText size="large" v-model="search" placeholder="Search All" @input="filterData" />
       </span>
+      <div v-show="search.length === 0">
+        <span class="text-lightgrey text-clamp1 font-bold space-x-10">
+          <router-link to="/cashier/menu/drinks" active-class="text-black">Drinks</router-link>
+          <router-link to="/cashier/menu/foods" active-class="text-black">Foods</router-link>
+        </span>
+        <!-- menu -->
+        <router-view />
+      </div>
+      <div v-show="search.length > 0">
+        <div>
+          <h1 class="text-lightgrey text-clamp2 font-bold ">Results</h1>
+          <div 
+            class=" flex flex-row flex-wrap overflow-x-auto justify-start gap-x-4 gap-y-2 mr-0 lg:mr-5 py-2">
+            <div v-if="filteredData.length === 0">
+              Item not found
+            </div>
+            <div v-else v-for="item in filteredData" :key="item.ProductID" @click="addToCart(item)">
+              <div class="flex h-full justify-between flex-col items-center relative ">
+                <img src="\src\pages\cashier\assets\images.jpg" alt="coffee"
+                  class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover object-center">
 
-      <span class="mr-0 lg:mr-5 flex relative flex-1">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="darkgrey"
-          class="w-[30px] h-[30px] absolute top-[20%] left-[.5%] ">
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-        </svg>
-        <InputText size="large" v-model="search" placeholder="Search" class="pl-10" />
-      </span>
-      <!-- menu -->
-      <router-view />
+                <div
+                  class="flex justify-center items-center leading-none py-2  w-[175px] text-clamp4 font-regular text-center text-black ">
+                  {{ item.ProductName }}
+                </div>
+                <div class="text-[12px]  font-semibold text-lightgrey">₱{{ item.UnitPrice }}.00
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <basket />

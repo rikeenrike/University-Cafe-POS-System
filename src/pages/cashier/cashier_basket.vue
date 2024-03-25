@@ -1,7 +1,7 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { gsap } from "gsap";
-import { UserOrder } from "/src/db/dummydb.js";
+import { UserOrder } from "./assets/orders.js";
 import { useToast } from "primevue/usetoast";
 
 const toast = useToast();
@@ -9,8 +9,21 @@ var quantity = ref(1);
 var isEditing = ref(false);
 var customerName = ref("Customer Name");
 var additionalFees = ref(0);
+var orderType = ref(0);
+var paymentType = ref(0);
 
-var orderType = ref(null);
+const newTransaction = ref({
+    FirstName: "",
+    LastName: "",
+    Alias: null,
+    Date: 0,
+    Time: 0,
+    OrderType: null,
+    MOP: null,
+    Total: 0,
+    AdditionalFees: 0,
+    items: [UserOrder.value],
+});
 
 const setOrderType = (type) => {
     if (type === orderType.value) {
@@ -18,9 +31,8 @@ const setOrderType = (type) => {
         return;
     }
     orderType.value = type;
+    console.log(orderType.value);
 };
-
-var paymentType = ref(null);
 const setPaymentType = (type) => {
     if (type === paymentType.value) {
         paymentType.value = null;
@@ -29,7 +41,6 @@ const setPaymentType = (type) => {
     paymentType.value = type;
     console.log(paymentType.value);
 };
-
 var increaseQuantity = (item) => {
     if (item.quantity === null) {
         return;
@@ -41,29 +52,24 @@ var decrementQuantity = (item) => {
     if (item.quantity === null) {
         return;
     }
-
     item.quantity--
-
     if (item.quantity === 0) {
         const index = UserOrder.value.indexOf(item);
         UserOrder.value.splice(index, 1);
     }
     updateSubTotal();
 };
-
 var updateSubTotal = () => {
     UserOrder.value.forEach((item) => {
-        item.total = item.quantity * item.price;
+        item.Subtotal = item.quantity * item.price;
     });
 };
-
-
-const calculateTotal = computed(() => {
+var calculateTotal = computed(() => {
     let itemsTotal = UserOrder.value.reduce((total, item) => total + (item.price * item.quantity), 0);
     return itemsTotal + additionalFees.value;
 });
 
-let totalItems = computed(() => {
+var totalItems = computed(() => {
     return UserOrder.value.reduce((total, item) => total + item.quantity, 0);
 });
 
@@ -75,10 +81,9 @@ var clearAll = () => {
     customerName.value = "Customer Name";
     isEditing.value = false;
     console.log("clear");
-    toast.add({ severity: 'error', summary: 'Payment Method not selected!', detail: 'Please select a payment method.', group: 'bc', life: 2000 });
+    toast.add({ severity: 'success', summary: 'Cleared', detail: 'Basket Cleared', group: 'bc', life: 2000 });
 };
-
-const toggleBasket = () => {
+var toggleBasket = () => {
     gsap.to(".basket", {
         duration: 0.1,
         display: "none",
@@ -86,6 +91,23 @@ const toggleBasket = () => {
     });
     console.log("basket");
 };
+var isloading = ref(true);
+var lastTransID = ref(0);
+const fetchLastTransID = async () => {
+    try {
+        const response = await fetch("http://127.0.0.1:8000/api/transactions/account/lastID");
+        lastTransID.value = await response.json();
+        isloading.value = false;
+
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+onMounted(() => {
+    fetchLastTransID();
+});
+
 
 </script>
 
@@ -100,12 +122,13 @@ const toggleBasket = () => {
                         <input v-show="isEditing" v-model="customerName" class="border-2" @blur="isEditing = false" />
                         <span v-show="!isEditing">{{ customerName }}</span>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="w-6 h-6" @click="isEditing = true">
+                            stroke="currentColor" class="w-6 h-6 cursor-pointer" @click="isEditing = true">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
                         </svg>
                     </h1>
-                    <h2 class="font-regular text-[16px]">Order#102313</h2>
+                    <Skeleton v-if="isloading" width="70px" height="1.5rem" borderRadius="5px"></Skeleton>
+                    <h2 v-else class="font-regular text-[16px]">Order#{{ lastTransID.TransID + 1 }}</h2>
                 </span>
                 <!-- clear button -->
                 <Button @click="clearAll" label="Primary" class="group flex flex-col bg-transparent">
@@ -155,7 +178,7 @@ const toggleBasket = () => {
                         <!-- subtotal -->
                         <div class="flex justify-between items-center pl-12 ">
                             <p>₱</p>
-                            <p>{{ item.total }}.00</p>
+                            <p>{{ item.Subtotal }}.00</p>
                         </div>
                     </div>
 
@@ -181,7 +204,7 @@ const toggleBasket = () => {
                     <p class="text-[14px] font-light">Order type</p>
                     <div class="flex gap-3">
                         <Button label="Primary" class="h-[40px] gap-2 border-primary"
-                            :class="{ 'border-2': orderType === 'Dine in' }" @click="setOrderType('Dine in')">
+                            :class="{ 'border-2': orderType === 1 }" @click="setOrderType(1)">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="black" class="w-6 h-6">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -190,7 +213,7 @@ const toggleBasket = () => {
                             <p class="text-black">Dine in</p>
                         </Button>
                         <Button label="Primary" class="h-[40px] gap-2 border-primary"
-                            :class="{ 'border-2': orderType === 'Take out' }" @click="setOrderType('Take out')">
+                            :class="{ 'border-2': orderType === 3 }" @click="setOrderType(3)">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="black" class="w-6 h-6">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -205,7 +228,7 @@ const toggleBasket = () => {
                     <div class="flex justify-between">
                         <div class="flex gap-3">
                             <Button label="Primary" class="h-[40px] gap-2 border-primary"
-                                :class="{ 'border-2': paymentType === 'Gcash' }" @click="setPaymentType('Gcash')">
+                                :class="{ 'border-2': paymentType === 1 }" @click="setPaymentType(1)">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                     stroke-width="1.5" stroke="black" class="w-6 h-6">
                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -214,7 +237,7 @@ const toggleBasket = () => {
                                 <p class="text-black">Gcash</p>
                             </Button>
                             <Button label="Primary" class="h-[40px] gap-2 border-primary"
-                                :class="{ 'border-2': paymentType === 'Cash' }" @click="setPaymentType('Cash')">
+                                :class="{ 'border-2': paymentType === 3 }" @click="setPaymentType(3)">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                     stroke-width="1.5" stroke="black" class="w-6 h-6">
                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -224,7 +247,7 @@ const toggleBasket = () => {
                             </Button>
                         </div>
                         <Button label="Primary" class="h-[40px] gap-2 border-primary"
-                            :class="{ 'border-2': paymentType === 'Tally' }" @click="setPaymentType('Tally')">
+                            :class="{ 'border-2': paymentType === 4 }" @click="setPaymentType(4)">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="black" class="w-6 h-6">
                                 <path stroke-linecap="round" stroke-linejoin="round"
