@@ -1,5 +1,5 @@
 <template>
-    <div class="space-y-1   ">
+    <div class="space-y-1">
         <div class="w-full h-[268px] border-[3px] rounded-md border-offwhite">
             <div class="pl-[20px] pt-[20px]">
                 <Skeleton width="220px" height="3rem" borderRadius="5px"></Skeleton>

@@ -32,7 +32,7 @@ export default {
       },
 
       // Colors
-      "text-lightgrey dark:text-surface-200",
+      "text-black dark:text-surface-200",
       "placeholder:text-lightgrey",
       "bg-offwhite dark:bg-surface-900",
 

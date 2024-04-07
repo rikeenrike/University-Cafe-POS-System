@@ -4,7 +4,7 @@ export default {
             // Shape
             'rounded-lg',
             'shadow-lg',
-            'border-0',
+            'border-1',
 
             // Positioning
             'z-40 transform origin-center',

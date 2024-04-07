@@ -14,6 +14,7 @@ export default {
             // Color
             'dark:border',
             'dark:border-surface-700',
+            'bg-white',
 
             // Transitions
             'transform',

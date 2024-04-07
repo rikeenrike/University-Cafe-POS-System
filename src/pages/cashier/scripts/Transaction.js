@@ -1,9 +1,9 @@
 import { ref } from 'vue';
 
-export const UserOrder = ref([]);
+export const Orders = ref([]);
 
 export const addToCart = (item) => {
-    const existingItem = UserOrder.value.find((i) => i.name === item.ProductName);
+    const existingItem = Orders.value.find((i) => i.name === item.ProductName);
     if (!existingItem) {
         const newItem = {
             ProductID: item.ProductID,
@@ -12,8 +12,7 @@ export const addToCart = (item) => {
             quantity: 1,
             Subtotal: item.UnitPrice,
         };
-        UserOrder.value.push(newItem);
-        console.log(UserOrder.value);
+        Orders.value.push(newItem);
     } else {
         existingItem.quantity += 1;
         existingItem.Subtotal = existingItem.price * existingItem.quantity;

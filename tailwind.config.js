@@ -26,11 +26,14 @@ export default {
         clamp4: "clamp(16px, 3vw ,20px)",
         clamp5: "clamp(10px, 7vw ,16px)",
       },
-      
+      width: {
+        clamp1: "clamp(250px, 90vw, 450px)",
+      }
+
     },
   },
   plugins: [
-    
+
   ],
 };
 

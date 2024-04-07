@@ -1,33 +1,93 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed } from "vue";
 import { gsap } from "gsap";
-import { UserOrder } from "./assets/orders.js";
+import { Orders } from "./scripts/Transaction.js";
 import { useToast } from "primevue/usetoast";
+import { lastTransID, loading } from "../kitchen/assets/fetchTransactions";
+import axios from "axios";
 
 const toast = useToast();
-var quantity = ref(1);
-var isEditing = ref(false);
-var customerName = ref("Customer Name");
-var additionalFees = ref(0);
-var orderType = ref(0);
-var paymentType = ref(0);
+const isEditing = ref(false);
+const errorhighlight = ref(false);
+const customerName = ref("Customer Name");
+const additionalFees = ref(0);
+const orderType = ref(0);
+const paymentType = ref(0);
+const total = ref(0);
+const notes = ref("");
 
-const newTransaction = ref({
-    FirstName: "",
-    LastName: "",
-    Alias: null,
-    Date: 0,
-    Time: 0,
-    OrderType: null,
-    MOP: null,
-    Total: 0,
-    AdditionalFees: 0,
-    items: [UserOrder.value],
+
+const DateTime = () => {
+    const now = new Date();
+    const options = { timeZone: 'Asia/Manila', hour24: false };
+    const formattedDate = now.toLocaleDateString('fr-CA', options);
+    const formattedTime = now.toLocaleTimeString('en-US', options);
+    return {
+        Date: formattedDate,
+        Time: formattedTime,
+    };
+};
+const dateTime = DateTime();
+
+const newTransaction = computed(() => ({
+    AccountID: 3,
+    AdditionalFee: additionalFees.value,
+    Alias: customerName.value,
+    Date: dateTime.Date,
+    MopID: paymentType.value,
+    OrderTypeID: orderType.value,
+    StatusID: 1,
+    Time: dateTime.Time,
+    Total: total.value,
+    Notes: notes.value,
+    Orders: finalOrders.value,
+}));
+
+const finalOrders = computed(() => {
+    return Orders.value.map((item) => ({
+        ProductID: item.ProductID,
+        Quantity: item.quantity,
+        Subtotal: item.Subtotal,
+    }));
 });
+
+const handleTransaction = async () => {
+    try {
+        await axios.post("http://127.0.0.1:8000/api/transactions", newTransaction.value, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        });
+        toast.add({ severity: 'success', summary: 'Order Placed', detail: 'Order has been placed', group: 'bc', life: 2000 });
+
+    } catch (error) {
+        console.log(error);
+    } finally {
+        clearAll();
+    }
+};
+
+const checkFields = () => {
+    if (orderType.value === 0) {
+        toast.add({ severity: 'error', summary: 'Order Type', detail: 'Please select Order Type', group: 'bc', life: 5000 });
+        errorhighlight.value = true;
+        return;
+    }
+    if (paymentType.value === 0) {
+        toast.add({ severity: 'error', summary: 'Payment Method', detail: 'Please select Payment Method', group: 'bc', life: 5000 });
+        errorhighlight.value = true;
+        return;
+    }
+    errorhighlight.value = false;
+    handleTransaction();
+};
+
+// Basket Functions
 
 const setOrderType = (type) => {
     if (type === orderType.value) {
-        orderType.value = null;
+        orderType.value = 0;
         return;
     }
     orderType.value = type;
@@ -35,55 +95,54 @@ const setOrderType = (type) => {
 };
 const setPaymentType = (type) => {
     if (type === paymentType.value) {
-        paymentType.value = null;
+        paymentType.value = 0;
         return;
     }
     paymentType.value = type;
     console.log(paymentType.value);
 };
-var increaseQuantity = (item) => {
+const increaseQuantity = (item) => {
     if (item.quantity === null) {
         return;
     }
     item.quantity++
     updateSubTotal();
 };
-var decrementQuantity = (item) => {
+const decrementQuantity = (item) => {
     if (item.quantity === null) {
         return;
     }
     item.quantity--
     if (item.quantity === 0) {
-        const index = UserOrder.value.indexOf(item);
-        UserOrder.value.splice(index, 1);
+        const index = Orders.value.indexOf(item);
+        Orders.value.splice(index, 1);
     }
     updateSubTotal();
 };
-var updateSubTotal = () => {
-    UserOrder.value.forEach((item) => {
+const updateSubTotal = () => {
+    Orders.value.forEach((item) => {
         item.Subtotal = item.quantity * item.price;
     });
 };
-var calculateTotal = computed(() => {
-    let itemsTotal = UserOrder.value.reduce((total, item) => total + (item.price * item.quantity), 0);
-    return itemsTotal + additionalFees.value;
+const calculateTotal = computed(() => {
+    let itemsTotal = Orders.value.reduce((total, item) => total + (item.price * item.quantity), 0);
+    total.value = itemsTotal + additionalFees.value;
+    return total.value;
 });
-
-var totalItems = computed(() => {
-    return UserOrder.value.reduce((total, item) => total + item.quantity, 0);
+const totalItems = computed(() => {
+    return Orders.value.reduce((total, item) => total + item.quantity, 0);
 });
-
-var clearAll = () => {
-    UserOrder.value = [];
+const clearAll = () => {
+    Orders.value = [];
     additionalFees.value = 0;
-    orderType.value = null;
-    paymentType.value = null;
+    orderType.value = 0;
+    paymentType.value = 0;
     customerName.value = "Customer Name";
     isEditing.value = false;
-    console.log("clear");
+    notes.value = "";
     toast.add({ severity: 'success', summary: 'Cleared', detail: 'Basket Cleared', group: 'bc', life: 2000 });
 };
-var toggleBasket = () => {
+const toggleBasket = () => {
     gsap.to(".basket", {
         duration: 0.1,
         display: "none",
@@ -91,49 +150,37 @@ var toggleBasket = () => {
     });
     console.log("basket");
 };
-var isloading = ref(true);
-var lastTransID = ref(0);
-const fetchLastTransID = async () => {
-    try {
-        const response = await fetch("http://127.0.0.1:8000/api/transactions/account/lastID");
-        lastTransID.value = await response.json();
-        isloading.value = false;
 
-    } catch (error) {
-        console.error(error);
-    }
-};
 
-onMounted(() => {
-    fetchLastTransID();
-});
+
+
+
 
 
 </script>
 
 <template>
-    <div class="py-10 hidden lg:flex">
-        <div class="shadow-2xl flex flex-col w-full bg-white rounded-[30px] overflow-hidden">
+    <div class="pb-5 hidden lg:flex">
+        <div class="border-2 flex flex-col w-full bg-white rounded-[10px] overflow-hidden">
             <!-- TOP ------------------------------------------------>
             <div class="flex items-center justify-between border-b-2 px-5 py-5">
                 <!-- customer and orderid -->
                 <span>
                     <h1 class="font-bold text-[24px] flex items-center gap-2">
-                        <input v-show="isEditing" v-model="customerName" class="border-2" @blur="isEditing = false" />
+                        <input v-show="isEditing" v-model="customerName" class="border-2 w-3/5"
+                            @blur="isEditing = false" />
                         <span v-show="!isEditing">{{ customerName }}</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="w-6 h-6 cursor-pointer" @click="isEditing = true">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                        </svg>
+                        <img src="./assets/icons/edit.svg" alt="" class="w-6 h-6 cursor-pointer"
+                            @click="isEditing = true">
                     </h1>
-                    <Skeleton v-if="isloading" width="70px" height="1.5rem" borderRadius="5px"></Skeleton>
-                    <h2 v-else class="font-regular text-[16px]">Order#{{ lastTransID.TransID + 1 }}</h2>
+                    <Skeleton v-if="loading" width="70px" height="1.5rem" borderRadius="5px"></Skeleton>
+                    <h2 v-else class="font-regular text-[16px]">Order#{{ lastTransID.TransID }}</h2>
                 </span>
                 <!-- clear button -->
                 <Button @click="clearAll" label="Primary" class="group flex flex-col bg-transparent">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        class="w-[24px] h-[24px] stroke-darkgrey group-hover:stroke-accent">
+                        stroke="currentColor"
+                        class="w-[24px] h-[24px] cursor-pointer stroke-darkgrey group-hover:stroke-accent">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
                     </svg>
@@ -143,31 +190,26 @@ onMounted(() => {
             <!-- MIDDLE ------------------------------------------------>
             <div class="px-5 font-bold text-[20px] border-b-2 py-3 lg:h-full overflow-hidden">
                 <span class="flex cursor-pointer">{{ totalItems }} item/s</span>
-                <div class="pt-[20px] font-light text-[16px] text-lightgrey grid grid-cols-3 pr-4">
+
+                <div class="pt-[20px] font-light text-[16px] text-lightgrey grid grid-cols-3 ">
                     <p>item</p>
                     <p class="flex justify-center">qty</p>
                     <p class="flex justify-end">subtotal</p>
                 </div>
-                <div v-if="UserOrder.length && UserOrder"
-                    class="pt-2 flex flex-col h-[190px] space-y-2 overflow-y-auto">
-                    <!-- RETURN THIS, NOT SCROLLING WHEN USED SCROLL WHEEL  -->
-                    <div v-for="(item, index) in UserOrder" :key="index"
-                        class="grid grid-cols-3 text-[16px] font-normal">
+
+                <div v-if="Orders.length && Orders" class="pt-2 flex flex-col h-[190px] space-y-2 overflow-y-auto">
+                    <li v-for="(item, index) in Orders" :key="index" class="grid grid-cols-3 text-[16px] font-normal">
                         <!-- item -->
-                        <div class="flex gap-1 items-center">
-                            <p class="text-left">{{ item.name }}</p>
-                        </div>
+                        <p class="text-left">{{ item.name }}</p>
                         <!-- quantity -->
-                        <div class="flex justify-between items-center  mx-6">
+                        <div class="flex justify-between items-center mx-6">
                             <svg @click="increaseQuantity(item)" xmlns="http://www.w3.org/2000/svg" fill="none"
                                 viewBox="0 0 24 24" stroke-width="1.5"
                                 class="w-6 h-6 cursor-pointer stroke-lightgrey active:stroke-black">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                             </svg>
-
                             <p>{{ item.quantity }}</p>
-
                             <svg @click="decrementQuantity(item)" xmlns="http://www.w3.org/2000/svg" fill="none"
                                 viewBox="0 0 24 24" stroke-width="1.5"
                                 class="w-6 h-6 cursor-pointer stroke-lightgrey active:stroke-black">
@@ -176,13 +218,13 @@ onMounted(() => {
                             </svg>
                         </div>
                         <!-- subtotal -->
-                        <div class="flex justify-between items-center pl-12 ">
-                            <p>₱</p>
+                        <div class="flex justify-between items-center pl-12">
+                            <p class="w-4 text-right">₱</p>
                             <p>{{ item.Subtotal }}.00</p>
                         </div>
-                    </div>
-
+                    </li>
                 </div>
+
                 <div v-else
                     class="text-lightgrey pt-2 flex flex-col justify-center items-center h-[190px] space-y-2 overflow-y-auto">
                     <p>No Items</p>
@@ -192,19 +234,20 @@ onMounted(() => {
             <div class="px-5 my-5 space-y-5">
                 <div class="flex justify-between items-center">
                     <p>Additional fees</p>
-                    <span class="relative w-20">
-                        <InputNumber size="small" v-model="additionalFees" placeholder="₱" />
-                    </span>
+                    <InputNumber class="w-20 h-10" size="small" v-model="additionalFees" placeholder="₱" />
                 </div>
                 <div class="flex justify-between font-bold text-[20px]">
                     <p>Total Price</p>
                     <p>₱ {{ calculateTotal }}.00</p>
                 </div>
                 <div>
-                    <p class="text-[14px] font-light">Order type</p>
-                    <div class="flex gap-3">
-                        <Button label="Primary" class="h-[40px] gap-2 border-primary"
-                            :class="{ 'border-2': orderType === 1 }" @click="setOrderType(1)">
+                    <span class="flex gap-2 text-[14px]">
+                        <p class=" font-light">Order Type</p>
+                        <p v-if="errorhighlight" class="text-accent ">*</p>
+                    </span>
+                    <div class="flex gap-3 w-fit">
+                        <Button label="Primary" class="h-[40px] gap-2 border-2"
+                            :class="{ 'border-primary': orderType === 1 }" @click="setOrderType(1)">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="black" class="w-6 h-6">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -212,8 +255,8 @@ onMounted(() => {
                             </svg>
                             <p class="text-black">Dine in</p>
                         </Button>
-                        <Button label="Primary" class="h-[40px] gap-2 border-primary"
-                            :class="{ 'border-2': orderType === 3 }" @click="setOrderType(3)">
+                        <Button label="Primary" class="h-[40px] gap-2 border-2 "
+                            :class="{ 'border-primary': orderType === 3 }" @click="setOrderType(3)">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="black" class="w-6 h-6">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -224,11 +267,14 @@ onMounted(() => {
                     </div>
                 </div>
                 <div>
-                    <p class="text-[14px] font-light">Choose Payment Method</p>
+                    <span class="flex gap-2 text-[14px]">
+                        <p class=" font-light">Payment Method</p>
+                        <p v-if="errorhighlight" class="text-accent">*</p>
+                    </span>
                     <div class="flex justify-between">
                         <div class="flex gap-3">
-                            <Button label="Primary" class="h-[40px] gap-2 border-primary"
-                                :class="{ 'border-2': paymentType === 1 }" @click="setPaymentType(1)">
+                            <Button label="Primary" class="h-[40px] gap-2 border-2"
+                                :class="{ 'border-primary': paymentType === 1 }" @click="setPaymentType(1)">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                     stroke-width="1.5" stroke="black" class="w-6 h-6">
                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -236,8 +282,8 @@ onMounted(() => {
                                 </svg>
                                 <p class="text-black">Gcash</p>
                             </Button>
-                            <Button label="Primary" class="h-[40px] gap-2 border-primary"
-                                :class="{ 'border-2': paymentType === 3 }" @click="setPaymentType(3)">
+                            <Button label="Primary" class="h-[40px] gap-2 border-2"
+                                :class="{ 'border-primary': paymentType === 3 }" @click="setPaymentType(3)">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                     stroke-width="1.5" stroke="black" class="w-6 h-6">
                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -246,8 +292,8 @@ onMounted(() => {
                                 <p class="text-black">Cash</p>
                             </Button>
                         </div>
-                        <Button label="Primary" class="h-[40px] gap-2 border-primary"
-                            :class="{ 'border-2': paymentType === 4 }" @click="setPaymentType(4)">
+                        <Button label="Primary" class="h-[40px] gap-2 border-2"
+                            :class="{ 'border-primary': paymentType === 4 }" @click="setPaymentType(4)">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="black" class="w-6 h-6">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -257,11 +303,17 @@ onMounted(() => {
                         </Button>
                     </div>
                 </div>
-                <Button label="Primary" class="w-full h-fit bg-primary hover:bg-accent">
-                    <p class="font-bold text-[20px]">Complete Order</p>
+                <div>
+                    <p>Notes</p>
+                    <InputText type="text" v-model="notes" placeholder="e.g. 'extra shot of expresso' " />
+                </div>
+                <Button @click="checkFields()" label="Primary"
+                    class="w-full h-fit bg-primary hover:bg-accent font-bold text-[20px]">
+                    Place Order
                 </Button>
             </div>
         </div>
+
     </div>
 
     <!-- mobile -->
@@ -314,8 +366,7 @@ onMounted(() => {
                 </div>
                 <div class="pt-2 flex flex-col h-[70%] space-y-2 overflow-y-auto">
                     <!-- RETURN THIS, NOT SCROLLING WHEN USED SCROLL WHEEL  -->
-                    <div v-for="(item, index) in UserOrder" :key="index"
-                        class="grid grid-cols-3 text-[16px] font-normal">
+                    <div v-for="(item, index) in Orders" :key="index" class="grid grid-cols-3 text-[16px] font-normal">
                         <div class="flex gap-1 items-center">
                             <p class="text-left">{{ item.name }}</p>
                         </div>

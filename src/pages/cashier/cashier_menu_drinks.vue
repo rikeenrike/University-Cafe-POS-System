@@ -1,29 +1,7 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import { addToCart } from "./assets/orders.js";
+import { addToCart } from "./scripts/Transaction.js";
 import menuloading from "../loading-comps/menuloading.vue";
-
-const products = ref([]);
-const loading = ref(true);
-const fetchsuccess = ref(true);
-
-const fetchProducts = async () => {
-  try {
-    const response = await fetch("http://127.0.0.1:8000/api/products/maincategories/1");
-    products.value = await response.json();
-    fetchsuccess.value = true;
-  } catch (error) {
-    console.error(error);
-    fetchsuccess.value = false;
-  } finally {
-    loading.value = false;
-  }
-}
-
-onMounted(() => {
-  fetchProducts();
-});
-
+import { drinksproducts, loading, fetchsuccess } from "./scripts/fetchProducts.js";
 </script>
 
 <template>
@@ -36,7 +14,7 @@ onMounted(() => {
       </div>
       <div v-if="fetchsuccess">
         <Accordion :activeIndex="[0, 1]" :multiple="true">
-          <AccordionTab v-for="tab in products" :key="tab.id" :header="tab.header">
+          <AccordionTab v-for="tab in drinksproducts" :key="tab.id" :header="tab.header">
             <div class="-space-x-5 flex overflow-x-auto sm:space-x-1">
               <!-- item -->
               <div v-for="item in tab.items" :key="item.id" @click="addToCart(item)"

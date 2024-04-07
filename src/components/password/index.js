@@ -1,10 +1,12 @@
 export default {
     root: ({ props }) => ({
         class: [
-            'inline-flex relative',
+            'flex w-full',
+            'font-sora font-semibold leading-none',
             {
                 'opacity-60 select-none pointer-events-none cursor-default': props.disabled
             }
+
         ]
     }),
     panel: {
@@ -17,8 +19,8 @@ export default {
             'shadow-md rounded-md',
 
             // Colors
-            'bg-surface-0 dark:bg-surface-900',
-            'text-surface-700 dark:text-white/80',
+            'bg-offwhite',
+            'text-black',
             'dark:border-surface-700'
         ]
     },
@@ -30,20 +32,19 @@ export default {
 
             // Shape and Size
             'border-0',
-            'h-3',
+            'h-2',
 
             // Spacing
             'mb-2',
 
             // Colors
-            'bg-surface-100 dark:bg-surface-700'
+            'bg-offwhite'
         ]
     },
     meterlabel: ({ instance }) => ({
         class: [
             // Size
-            'h-full',
-
+            '',
             // Colors
             {
                 'bg-red-500 dark:bg-red-400/50': instance?.meter?.strength == 'weak',
@@ -56,19 +57,19 @@ export default {
         ]
     }),
     showicon: {
-        class: ['absolute top-1/2 right-3 -mt-2', 'text-surface-600 dark:text-white/70']
+        class: ['absolute top-1/2 right-3 -mt-2', 'text-darkgrey']
     },
     hideicon: {
-        class: ['absolute top-1/2 right-3 -mt-2', 'text-surface-600 dark:text-white/70']
+        class: ['absolute top-1/2 right-3 -mt-2', 'text-lightgrey']
     },
     input: {
         root: ({ props, context, parent }) => ({
             class: [
                 // Font
-                'font-sans leading-none',
+                'font-sans leading-none w-full',
 
                 // Flex
-                { 'flex-1 w-[1%]': parent.instance.$name == 'InputGroup' },
+                { 'flex-1': parent.instance.$name == 'InputGroup' },
 
                 // Spacing
                 'm-0',
@@ -79,17 +80,15 @@ export default {
                 },
 
                 // Shape
-                { 'rounded-md': parent.instance.$name !== 'InputGroup' },
+                { 'rounded-xl': parent.instance.$name !== 'InputGroup' },
                 { 'first:rounded-l-md rounded-none last:rounded-r-md': parent.instance.$name == 'InputGroup' },
                 { 'border-0 border-y border-l last:border-r': parent.instance.$name == 'InputGroup' },
                 { 'first:ml-0 ml-[-1px]': parent.instance.$name == 'InputGroup' && !props.showButtons },
 
                 // Colors
-                'text-surface-600 dark:text-surface-200',
-                'placeholder:text-surface-400 dark:placeholder:text-surface-500',
-                'bg-surface-0 dark:bg-surface-900',
-                'border',
-                { 'border-surface-300 dark:border-surface-600': !parent.props.invalid },
+                'text-black',
+                'placeholder:text-lightgrey dark:placeholder:text-lightgrey',
+                'bg-offwhite',
 
                 // Invalid State
                 { 'border-red-500 dark:border-red-400': parent.props.invalid },
@@ -97,7 +96,7 @@ export default {
                 // States
                 {
                     'hover:border-primary-500 dark:hover:border-primary-400': !context.disabled && !parent.props.invalid,
-                    'focus:outline-none focus:outline-offset-0 focus:ring focus:ring-primary-500/50 dark:focus:ring-primary-400/50 focus:z-10': !context.disabled,
+                    'focus:outline-none  focus:z-10': !context.disabled,
                     'opacity-60 select-none pointer-events-none cursor-default': context.disabled
                 },
 

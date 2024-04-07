@@ -1,25 +1,13 @@
 <script setup>
 import basket from "./cashier_basket.vue";
-import { ref, onMounted, computed } from "vue";
-import { addToCart } from "./assets/orders.js";
-
+import { ref, computed } from "vue";
+import { addToCart } from "./scripts/Transaction.js";
+import { productdata } from "./scripts/fetchProducts.js";
+import { ongoingOrders, loading, fetchsuccess } from "../kitchen/assets/fetchTransactions";
+import statusloading from "../loading-comps/statusloading.vue";
 const orderReady = ref([]);
-const orderOngoing = ref([]);
 const search = ref("");
-
-var productdata = ref([]);
-const fetchproducts = async () => {
-  try {
-    const response = await fetch("http://127.0.0.1:8000/api/products");
-    productdata.value = await response.json();
-    console.log(productdata.value);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 const filteredResults = ref([]);
-
 const filteredData = computed(() => {
   if (!search.value) {
     return productdata.value;
@@ -27,7 +15,6 @@ const filteredData = computed(() => {
 
   return filteredResults.value;
 });
-
 const filterData = () => {
   if (!productdata.value) {
     isloading.value = false;
@@ -38,9 +25,8 @@ const filterData = () => {
   );
 };
 
-onMounted(() => {
-  fetchproducts();
-});
+
+
 
 </script>
 
@@ -48,15 +34,17 @@ onMounted(() => {
   <div
     class="px-5 relative md:px-[43px] lg:grid lg:grid-cols-[2fr,2fr] xl:grid-cols-[2fr,.8fr] font-sora select-none top-[80px]"
     style="height: calc(100vh - 80px)">
-
+    <!-- left wing -->
     <div class="flex flex-col overflow-hidden">
       <!-- status -->
       <div class="flex pr-[20px] h-[151px] gap-2">
         <!-- Ready Section -->
         <div class="w-full xl:flex xl:w-1/2 flex-col justify-evenly">
           <h1 class="text-[32px] text-black font-bold">Ready</h1>
-          <div v-if="orderReady && orderReady.length"
-            class="flex flex-row whitespace-nowrap gap-5 overflow-x-scroll overflow-auto">
+          <div v-if="loading">
+            <statusloading />
+          </div>
+          <div v-if="false" class="flex flex-row whitespace-nowrap gap-5 overflow-x-scroll overflow-auto">
             <div v-for="order in orderReady" :key="order.id"
               class="p-3 w-[256px] h-[99px] bg-accent rounded-[15px] text-offwhite">
               <p class="text-[24px] font-bold">{{ order.customerName }}</p>
@@ -64,7 +52,7 @@ onMounted(() => {
               <p class="text-[12px] font-light">Item/s: {{ order.items }}</p>
             </div>
           </div>
-          <div v-else class="flex flex-row whitespace-nowrap gap-5 overflow-x-scroll  overflow-auto">
+          <div v-else>
             <p class="text-lightgrey flex items-center w-[256px] h-[99px]">
               No orders ready...
             </p>
@@ -73,13 +61,17 @@ onMounted(() => {
         <!-- Ongoing Section -->
         <div class="hidden xl:flex w-1/2 flex-col justify-evenly">
           <h1 class="text-[32px] text-black font-bold">Ongoing</h1>
-          <div v-if="orderOngoing && orderOngoing.length"
+          <div v-if="loading">
+            <statusloading />
+          </div>
+          <div v-if="ongoingOrders.length"
             class="flex flex-row whitespace-nowrap gap-5 overflow-x-scroll overflow-y-hidden">
-            <div v-for="ongoing in orderOngoing" :key="ongoing.id"
+            <div v-for="ongoing in ongoingOrders" :key="ongoing.TransID"
               class="p-3 w-[256px] h-[99px] bg-secondary rounded-[15px] text-accent">
-              <p class="text-[24px] font-bold">{{ ongoing.customerName }}</p>
-              <p class="text-[16px] font-light">Order#{{ ongoing.orderNumber }}</p>
-              <p class="text-[12px] font-light">Item/s:{{ ongoing.items }}</p>
+              <p v-if="ongoing.Alias !== null" class="text-[24px] font-bold">{{ ongoing.Alias }}</p>
+              <p v-else class="text-[24px] font-bold">{{ ongoing.FirstName + ' ' + ongoing.LastName }}</p>
+              <p class="text-[16px] font-light">Order#{{ ongoing.TransID }}</p>
+              <p class="text-[12px] font-light">Item/s:test</p>
             </div>
           </div>
           <div v-else class="flex flex-row whitespace-nowrap gap-5 overflow-x-scroll  overflow-auto">
@@ -104,8 +96,7 @@ onMounted(() => {
       <div v-show="search.length > 0">
         <div>
           <h1 class="text-lightgrey text-clamp2 font-bold ">Results</h1>
-          <div 
-            class=" flex flex-row flex-wrap overflow-x-auto justify-start gap-x-4 gap-y-2 mr-0 lg:mr-5 py-2">
+          <div class=" flex flex-row flex-wrap overflow-x-auto justify-start gap-x-4 gap-y-2 mr-0 lg:mr-5 py-2">
             <div v-if="filteredData.length === 0">
               Item not found
             </div>
@@ -126,7 +117,7 @@ onMounted(() => {
         </div>
       </div>
     </div>
-
+    <!-- right wing -->
     <basket />
   </div>
 </template>

@@ -31,7 +31,7 @@ export default {
                 'text-blue-700 dark:text-blue-300': props.message.severity == 'info',
                 'text-white': props.message.severity == 'success',
                 'text-orange-700 dark:text-orange-300': props.message.severity == 'warn',
-                'text-red-700 dark:text-red-300': props.message.severity == 'error'
+                'text-black ': props.message.severity == 'error'
             }
         ]
     }),

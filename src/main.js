@@ -20,6 +20,10 @@ import Toast from 'primevue/toast';
 import ToastService from 'primevue/toastservice';
 import Skeleton from 'primevue/skeleton';
 import ProgressSpinner from 'primevue/progressspinner';
+import Password from 'primevue/password';
+import ProgressBar from 'primevue/progressbar';
+import ConfirmationService from 'primevue/confirmationservice';
+import ConfirmDialog from 'primevue/confirmdialog';
 
 const app = createApp(App);
 app.use(PrimeVue, {
@@ -27,6 +31,10 @@ app.use(PrimeVue, {
   pt: Lara,
 });
 app.use(router);
+app.component("ConfirmDialog", ConfirmDialog);
+app.use(ConfirmationService);
+app.component("ProgressBar", ProgressBar);
+app.component("Password", Password);
 app.directive("tooltip", Tooltip);
 app.component("Accordion", Accordion);
 app.component("AccordionTab", AccordionTab);

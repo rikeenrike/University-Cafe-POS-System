@@ -1,118 +1,39 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
+import { ongoingOrders, loading, fetchsuccess, readyOrders } from "./assets/fetchTransactions";
+import { useConfirm } from "primevue/useconfirm";
+import { useToast } from "primevue/usetoast";
 
-const ongoing = ref([
-    {
-        TransID: 1,
-        FirstName: "Customer Name",
-        LastName: "Customer Name",
-        Alias: "Customer Name",
-        OrderDateTime: "2:57:01 PM",
-        OrderType: "Take Out",
-        MOP: "Cash",
-        Total: 200.00,
-        items: [
-            {
-                ProductID: 1,
-                ProductName: "Item 1",
-                Qty: 1,
-                Subtotal: 100.00
-            },
-            {
-                ProductID: 2,
-                ProductName: "Item 1",
-                Qty: 1,
-                Subtotal: 100.00
-            }
-        ]
-    },
-    {
-        TransID: 2, //Transactions
-        FirstName: "Customer Name", //Accounts
-        LastName: "Customer Name", //Accounts
-        Alias: null, //Transactions
-        Date: "September 10, 2023", //Transactions
-        Time: "2:57:01 PM", //Transactions
-        OrderType: "Take Out", //order_types
-        MOP: "Cash", //mode_of_payments
-        Total: 200.00, //Transactions
-        // Orders BY TransID
-        items: [
-            {
-                ProductID: 1, //Products
-                ProductName: "Item 1", //Products
-                Qty: 1, //Orders
-                Subtotal: 100.00 //Orders
-            },
-            {
-                ProductID: 2,
-                ProductName: "Item 1",
-                Qty: 1,
-                Subtotal: 100.00
-            },
-            {
-                ProductID: 3,
-                ProductName: "Item 1",
-                Qty: 1,
-                Subtotal: 100.00
-            },
-        ]
-    },
-    {
-        TransID: 2, //Transactions
-        FirstName: "Customer Name", //Accounts
-        LastName: "Customer Name", //Accounts
-        Alias: null, //Transactions
-        Date: "September 10, 2023", //Transactions
-        Time: "2:57:01 PM", //Transactions
-        OrderType: "Take Out", //order_types
-        MOP: "Cash", //mode_of_payments
-        Total: 200.00, //Transactions
-        // Orders BY TransID
-        items: [
-            {
-                ProductID: 1, //Products
-                ProductName: "Item 1", //Products
-                Qty: 1, //Orders
-                Subtotal: 100.00 //Orders
-            },
-            {
-                ProductID: 2,
-                ProductName: "Item 1",
-                Qty: 1,
-                Subtotal: 100.00
-            },
-            {
-                ProductID: 3,
-                ProductName: "Item 1",
-                Qty: 1,
-                Subtotal: 100.00
-            },
-        ]
-    },
-]);
+const confirm = useConfirm();
+const toast = useToast();
 
+const cancelOrder = (TransID) => {
+    confirm.require({
+        message: "Are you sure you want to cancel this order?",
+        header: "Confirmation",
+        icon: "pi pi-exclamation-triangle",
+        accept: () => {
+            console.log("Order cancelled");
+        },
+        reject: () => {
+            console.log("Order not cancelled");
+        },
+    });
+};
 
-const ongoingOrders = ref([]);
-const loading = ref(true);
-const fetchsuccess = ref(true);
-const fetchOngoingOrders = async () => {
-    try {
-        const response = await fetch("http://127.0.0.1:8000/api/transactions/kitchen/ongoing");
-        ongoingOrders.value = await response.json();
-        fetchsuccess.value = true;
-    } catch (error) {
-        console.error(error);
-        fetchsuccess.value = false;
-    } finally {
-        loading.value = false;
-    }
-}
-
-onMounted(() => {
-    fetchOngoingOrders();
-});
-
+const setStatusReady = (TransID) => {
+    confirm.require({
+        message: "Are you sure this order is ready?",
+        header: "Confirmation",
+        icon: "pi pi-exclamation-triangle",
+        accept: () => {
+            console.log("Order ready");
+        },
+        reject: () => {
+            console.log("Order not ready");
+        },
+    });
+};
 </script>
 
 <template>
@@ -140,10 +61,16 @@ onMounted(() => {
                                 <p>Payment</p>
                             </div>
                             <div>
-                                <p>{{ ong.Date }}</p>
+                                <p>{{ ong.Time }}</p>
                                 <p>{{ ong.OrderType }}</p>
                                 <p>{{ ong.MOP }}</p>
                             </div>
+                        </div>
+                        <div class="flex">
+                            <p>Notes :</p>
+                            <p class="break-all">
+                                {{ ong.Notes }}
+                            </p>
                         </div>
                     </div>
                     <!-- Order -->
@@ -151,13 +78,13 @@ onMounted(() => {
                         <div class="flex justify-between border-y-2 border-black mb-2">
                             <p>Items</p>
                             <p>Qty</p>
-                            <p>Sub total</p>
+
                         </div>
                         <div v-if="ong.items.length">
                             <div v-for="items in ong.items" :key="items.ProductID" class="flex justify-between">
                                 <p>{{ items.ProductName }}</p>
                                 <p>{{ items.Qty }}</p>
-                                <p>₱ {{ items.Subtotal }}.00</p>
+
                             </div>
                         </div>
                         <div v-else class="flex justify-center font-bold text-[25px]">
@@ -170,7 +97,8 @@ onMounted(() => {
                     </div>
                     <!-- buttons -->
                     <div class="flex justify-between items-center">
-                        <Button @click="clearAll" label="Primary" class="group flex flex-col bg-transparent">
+                        <Button @click="cancelOrder(ong.TransID)" label="Primary"
+                            class="group flex flex-col bg-transparent">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 class="w-[24px] h-[24px] stroke-darkgrey group-hover:stroke-accent">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -178,7 +106,9 @@ onMounted(() => {
                             </svg>
                             <p class="text-darkgrey text-[14px] group-hover:text-accent">Cancel order</p>
                         </Button>
-                        <button class="px-4 bg-accent text-offwhite rounded-lg py-2">Mark as Ready</button>
+                        <button @click="setStatusReady(ong.TransID)"
+                            class="px-4 bg-accent hover:bg-primary active:bg-accent text-offwhite rounded-lg py-2">Mark
+                            as Ready</button>
                     </div>
                 </div>
             </div>
@@ -189,7 +119,7 @@ onMounted(() => {
             <h1 class="text-[32px] text-black font-bold pl-0 xl:pl-5">Ready</h1>
             <div class="flex flex-wrap pl-0 xl:flex-nowrap xl:flex-col xl:space-y-5 xl:pl-5  overflow-auto"
                 style="height: calc(100vh - 130px)">
-                <div v-for="ong in ongoing" :key="ong.TransID"
+                <div v-for="ong in readyOrders" :key="ong.TransID"
                     class="w-[413px] h-fit px-2 py-4 m-2 rounded-lg bg-offwhite">
                     <!-- Name & Order Number -->
                     <div class="pb-3">
@@ -240,7 +170,8 @@ onMounted(() => {
                             </svg>
                             <p class="text-darkgrey text-[14px] group-hover:text-accent">Cancel order</p>
                         </Button>
-                        <button class="px-4 bg-accent text-offwhite rounded-lg py-2">Mark as Ready</button>
+                        <button
+                            class="px-4 bg-accent hover:bg-primary active:bg-accent text-offwhite rounded-lg py-2">Complete</button>
                     </div>
                 </div>
             </div>
