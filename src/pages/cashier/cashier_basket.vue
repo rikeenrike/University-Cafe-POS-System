@@ -150,13 +150,6 @@ const toggleBasket = () => {
     });
     console.log("basket");
 };
-
-
-
-
-
-
-
 </script>
 
 <template>
@@ -299,7 +292,7 @@ const toggleBasket = () => {
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Zm6-10.125a1.875 1.875 0 1 1-3.75 0 1.875 1.875 0 0 1 3.75 0Zm1.294 6.336a6.721 6.721 0 0 1-3.17.789 6.721 6.721 0 0 1-3.168-.789 3.376 3.376 0 0 1 6.338 0Z" />
                             </svg>
-                            <p class="text-black">Tally (Employee)</p>
+                            <p class="text-black">Tally</p>
                         </Button>
                     </div>
                 </div>
@@ -332,7 +325,8 @@ const toggleBasket = () => {
                                 d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
                         </svg>
                     </h1>
-                    <h2 class="font-regular text-[16px]">Order#102313</h2>
+                    <Skeleton v-if="loading" width="70px" height="1.5rem" borderRadius="5px"></Skeleton>
+                    <h2 v-else class="font-regular text-[16px]">Order#{{ lastTransID.TransID }}</h2>
                 </span>
                 <!-- back button -->
                 <div @click="toggleBasket">
@@ -364,13 +358,12 @@ const toggleBasket = () => {
                     <p class="flex justify-center">qty</p>
                     <p class="flex justify-end">subtotal</p>
                 </div>
-                <div class="pt-2 flex flex-col h-[70%] space-y-2 overflow-y-auto">
-                    <!-- RETURN THIS, NOT SCROLLING WHEN USED SCROLL WHEEL  -->
-                    <div v-for="(item, index) in Orders" :key="index" class="grid grid-cols-3 text-[16px] font-normal">
-                        <div class="flex gap-1 items-center">
-                            <p class="text-left">{{ item.name }}</p>
-                        </div>
-                        <div class="flex justify-between items-center mx-8">
+                <div v-if="Orders.length && Orders" class="pt-2 flex flex-col h-[190px] space-y-2 overflow-y-auto">
+                    <li v-for="(item, index) in Orders" :key="index" class="grid grid-cols-3 text-[16px] font-normal">
+                        <!-- item -->
+                        <p class="text-left">{{ item.name }}</p>
+                        <!-- quantity -->
+                        <div class="flex justify-between items-center mx-6">
                             <svg @click="increaseQuantity(item)" xmlns="http://www.w3.org/2000/svg" fill="none"
                                 viewBox="0 0 24 24" stroke-width="1.5"
                                 class="w-6 h-6 cursor-pointer stroke-lightgrey active:stroke-black">
@@ -385,30 +378,37 @@ const toggleBasket = () => {
                                     d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                             </svg>
                         </div>
-                        <div class="flex justify-between items-center pl-12 ">
-                            <p>₱</p>
-                            <p>{{ item.total }}.00</p>
+                        <!-- subtotal -->
+                        <div class="flex justify-between items-center pl-12">
+                            <p class="w-4 text-right">₱</p>
+                            <p>{{ item.Subtotal }}.00</p>
                         </div>
-                    </div>
+                    </li>
+                </div>
+
+                <div v-else
+                    class="text-lightgrey pt-2 flex flex-col justify-center items-center h-[190px] space-y-2 overflow-y-auto">
+                    <p>No Items</p>
                 </div>
             </div>
             <!-- BOTTOM ------------------------------------------------>
             <div class="px-5 my-5 space-y-5">
                 <div class="flex justify-between items-center">
                     <p>Additional fees</p>
-                    <span class="relative w-20">
-                        <InputNumber size="small" v-model="additionalFees" placeholder="₱" />
-                    </span>
+                    <InputNumber class="w-20 h-10" size="small" v-model="additionalFees" placeholder="₱" />
                 </div>
                 <div class="flex justify-between font-bold text-[20px]">
                     <p>Total Price</p>
                     <p>₱ {{ calculateTotal }}.00</p>
                 </div>
                 <div>
-                    <p class="text-[14px] font-light">Order type</p>
-                    <div class="flex gap-3">
-                        <Button label="Primary" class="h-[40px] gap-2 border-primary"
-                            :class="{ 'border-2': orderType === 'Dine in' }" @click="setOrderType('Dine in')">
+                    <span class="flex gap-2 text-[14px]">
+                        <p class=" font-light">Order Type</p>
+                        <p v-if="errorhighlight" class="text-accent ">*</p>
+                    </span>
+                    <div class="flex gap-3 w-fit">
+                        <Button label="Primary" class="h-[40px] gap-2 border-2"
+                            :class="{ 'border-primary': orderType === 1 }" @click="setOrderType(1)">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="black" class="w-6 h-6">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -416,8 +416,8 @@ const toggleBasket = () => {
                             </svg>
                             <p class="text-black">Dine in</p>
                         </Button>
-                        <Button label="Primary" class="h-[40px] gap-2 border-primary"
-                            :class="{ 'border-2': orderType === 'Take out' }" @click="setOrderType('Take out')">
+                        <Button label="Primary" class="h-[40px] gap-2 border-2 "
+                            :class="{ 'border-primary': orderType === 3 }" @click="setOrderType(3)">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="black" class="w-6 h-6">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -428,11 +428,14 @@ const toggleBasket = () => {
                     </div>
                 </div>
                 <div>
-                    <p class="text-[14px] font-light">Choose Payment Method</p>
+                    <span class="flex gap-2 text-[14px]">
+                        <p class=" font-light">Payment Method</p>
+                        <p v-if="errorhighlight" class="text-accent">*</p>
+                    </span>
                     <div class="flex justify-between">
                         <div class="flex gap-3">
-                            <Button label="Primary" class="h-[40px] gap-2 border-primary"
-                                :class="{ 'border-2': paymentType === 'Gcash' }" @click="setPaymentType('Gcash')">
+                            <Button label="Primary" class="h-[40px] gap-2 border-2"
+                                :class="{ 'border-primary': paymentType === 1 }" @click="setPaymentType(1)">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                     stroke-width="1.5" stroke="black" class="w-6 h-6">
                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -440,29 +443,34 @@ const toggleBasket = () => {
                                 </svg>
                                 <p class="text-black">Gcash</p>
                             </Button>
-                            <Button label="Primary" class="h-[40px] gap-2 border-primary"
-                                :class="{ 'border-2': paymentType === 'Cash' }" @click="setPaymentType('Cash')">
+                            <Button label="Primary" class="h-[40px] gap-2 border-2"
+                                :class="{ 'border-primary': paymentType === 3 }" @click="setPaymentType(3)">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                     stroke-width="1.5" stroke="black" class="w-6 h-6">
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z" />
                                 </svg>
-                                <p class="text-black">Cash</p>
+                                <p class="text-black ">Cash</p>
                             </Button>
                         </div>
-                        <Button label="Primary" class="h-[40px] gap-2 border-primary"
-                            :class="{ 'border-2': paymentType === 'Tally' }" @click="setPaymentType('Tally')">
+                        <Button label="Primary" class="h-[40px] gap-2 border-2"
+                            :class="{ 'border-primary': paymentType === 4 }" @click="setPaymentType(4)">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="black" class="w-6 h-6">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Zm6-10.125a1.875 1.875 0 1 1-3.75 0 1.875 1.875 0 0 1 3.75 0Zm1.294 6.336a6.721 6.721 0 0 1-3.17.789 6.721 6.721 0 0 1-3.168-.789 3.376 3.376 0 0 1 6.338 0Z" />
                             </svg>
-                            <p class="text-black">Tally (Employee)</p>
+                            <p class="text-black">Tally</p>
                         </Button>
                     </div>
                 </div>
-                <Button label="Primary" class="w-full h-fit bg-primary hover:bg-accent">
-                    <p class="font-bold text-[20px]">Complete Order</p>
+                <div>
+                    <p>Notes</p>
+                    <InputText type="text" v-model="notes" placeholder="e.g. 'extra shot of expresso' " />
+                </div>
+                <Button @click="checkFields()" label="Primary"
+                    class="w-full h-fit bg-primary hover:bg-accent font-bold text-[20px]">
+                    Place Order
                 </Button>
             </div>
         </div>

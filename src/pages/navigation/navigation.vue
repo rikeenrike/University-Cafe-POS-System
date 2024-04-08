@@ -2,30 +2,25 @@
 import { ref } from "vue";
 import { gsap } from "gsap";
 const sidebarmenu = ref(false);
-var itemsQty = ref(1);
 
-var basket = ref(false);
-
-let isBasketVisible = false;
 
 const toggleBasket = () => {
-  gsap.to(".basket", {
-    duration: 0.5,
-    display: "block",
-    ease: "power4.out",
-  });
-  console.log("basket");
+    gsap.to(".basket", {
+        duration: 0.5,
+        display: "block",
+        ease: "power4.out",
+    });
+    console.log("basket");
 };
-
 const menu = ref();
 const toggle = (event) => {
-  menu.value.toggle(event);
-  console.log("toggle");
+    menu.value.toggle(event);
+    console.log("toggle");
 };
 const items = ref([
-  {
-    label: "Logout",
-  },
+    {
+        label: "Logout",
+    },
 ]);
 </script>
 
@@ -40,10 +35,14 @@ const items = ref([
                 <div class="flex items-center space-x-4">
                     <div class="hidden lg:block text-[34px] font-bold text-black">University Cafe</div>
                     <span class="hidden md:flex cursor-pointer  pl-0 lg:pl-10 space-x-4  text-darkgrey">
-                        <router-link to="/cashier" active-class="text-black" class="hover:text-black duration-100">Cashier</router-link>
-                        <router-link to="/kitchen" active-class="text-black" class="hover:text-black duration-100">Kitchen</router-link>
-                        <div class="hover:text-black duration-100">Menu Management</div>
-                        <div class="hover:text-black duration-100">Reports</div>
+                        <router-link to="/cashier" active-class="text-black"
+                            class="hover:text-black duration-100">Cashier</router-link>
+                        <router-link to="/kitchen" active-class="text-black"
+                            class="hover:text-black duration-100">Kitchen</router-link>
+                        <router-link to="/menu-management" active-class="text-black"
+                            class="hover:text-black duration-100">Menu Management</router-link>
+                        <router-link to="/reports" active-class="text-black"
+                            class="hover:text-black duration-100">Reports</router-link>
                     </span>
                 </div>
             </div>
@@ -56,8 +55,8 @@ const items = ref([
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
                 </svg>
-                <div v-if="itemsQty > 0">
-                    <Badge :value="itemsQty" severity="success"
+                <div v-if="totalitems > 0">
+                    <Badge :value="totalitems" severity="success"
                         class=" absolute top-1 right-0 transform translate-x-[50%] -translate-y-[50%]" />
                 </div>
             </div>
@@ -94,10 +93,22 @@ const items = ref([
             <Sidebar v-model:visible="sidebarmenu" position="right">
                 <span class="h-full flex flex-col justify-between text-[24px] font-bold space-y-2 font-sora">
                     <div>
-                        <div>Cashier</div>
-                        <div>Kitchen</div>
-                        <div>Menu Management</div>
-                        <div>Reports</div>
+                        <div>
+                            <router-link to="/cashier" active-class="text-black" @click="sidebarmenu = false"
+                                class="hover:text-black duration-100">Cashier</router-link>
+                        </div>
+                        <div>
+                            <router-link to="/kitchen" active-class="text-black" @click="sidebarmenu = false"
+                                class="hover:text-black duration-100">Kitchen</router-link>
+                        </div>
+                        <div>
+                            <router-link to="/menu-management" active-class="text-black"
+                                class="hover:text-black duration-100">Menu Management</router-link>
+                        </div>
+                        <div> 
+                            <router-link to="/reports" active-class="text-black"
+                                class="hover:text-black duration-100">Reports</router-link>
+                        </div>
                     </div>
                     <div>Logout</div>
                 </span>

@@ -3,9 +3,9 @@ import basket from "./cashier_basket.vue";
 import { ref, computed } from "vue";
 import { addToCart } from "./scripts/Transaction.js";
 import { productdata } from "./scripts/fetchProducts.js";
-import { ongoingOrders, loading, fetchsuccess } from "../kitchen/assets/fetchTransactions";
+import { ongoingOrders, readyOrders , loading, fetchsuccess } from "../kitchen/assets/fetchTransactions";
 import statusloading from "../loading-comps/statusloading.vue";
-const orderReady = ref([]);
+
 const search = ref("");
 const filteredResults = ref([]);
 const filteredData = computed(() => {
@@ -25,15 +25,14 @@ const filterData = () => {
   );
 };
 
-
-
-
 </script>
 
 <template>
   <div
-    class="px-5 relative md:px-[43px] lg:grid lg:grid-cols-[2fr,2fr] xl:grid-cols-[2fr,.8fr] font-sora select-none top-[80px]"
-    style="height: calc(100vh - 80px)">
+    class="px-5 relative md:px-[43px] lg:grid lg:grid-cols-[2fr,2fr] xl:grid-cols-[2fr,.8fr] font-sora select-none top-[80px] h-[calc(100vh-80px)] ">
+    <div v-if="loading" class="fixed z-20 -top-[1px] w-full">
+      <ProgressBar mode="indeterminate" style="height: 6px"></ProgressBar>
+    </div>
     <!-- left wing -->
     <div class="flex flex-col overflow-hidden">
       <!-- status -->
@@ -44,12 +43,13 @@ const filterData = () => {
           <div v-if="loading">
             <statusloading />
           </div>
-          <div v-if="false" class="flex flex-row whitespace-nowrap gap-5 overflow-x-scroll overflow-auto">
-            <div v-for="order in orderReady" :key="order.id"
-              class="p-3 w-[256px] h-[99px] bg-accent rounded-[15px] text-offwhite">
-              <p class="text-[24px] font-bold">{{ order.customerName }}</p>
-              <p class="text-[16px] font-light">Order#{{ order.orderNumber }}</p>
-              <p class="text-[12px] font-light">Item/s: {{ order.items }}</p>
+          <div v-if="readyOrders.length" class="flex flex-row whitespace-nowrap gap-5 overflow-x-scroll overflow-auto">
+            <div v-for="ready in readyOrders" :key="ready.TransID"
+              class="p-3 w-[256px] h-[99px] bg-accent rounded-[15px] text-offwhite ">
+              <p v-if="ready.Alias !== null" class="text-[24px] font-bold">{{ ready.Alias }}</p>
+              <p v-else class="text-[24px] font-bold">{{ ready.FirstName + ' ' + ready.LastName }}</p>
+              <p class="text-[16px] font-light">Order#{{ ready.TransID }}</p>
+              <p class="text-[12px] font-light">Item/s:test</p>
             </div>
           </div>
           <div v-else>
@@ -91,7 +91,8 @@ const filterData = () => {
           <router-link to="/cashier/menu/foods" active-class="text-black">Foods</router-link>
         </span>
         <!-- menu -->
-        <router-view />
+        <router-view name="foods" />
+        <router-view name="drinks" />
       </div>
       <div v-show="search.length > 0">
         <div>

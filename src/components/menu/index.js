@@ -3,12 +3,13 @@ export default {
     class: [
       // Sizing and Shape
       "min-w-[1]",
-      "rounded-xl",
+      "rounded-lg",
       // Spacing
       "py-2",
       // Colors
       "text-black",
       "border border-surface-200",
+      "bg-white",
     ],
   },
   menu: {

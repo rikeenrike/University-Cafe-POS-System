@@ -23,10 +23,9 @@ export const fetchOrders = async () => {
     }
 }
 
-
-export const updateOrderStatus = async (id, status) => {
+export const updateOrderStatus = async (TransID, StatusID) => {
     try {
-        const response = await axios.put(`http://`)
+        const response = await axios.put(`http://127.0.0.1:8000/api/transactions/${TransID}/${StatusID}/statussetter`);
     } catch (error) {
         console.error(error);
     }

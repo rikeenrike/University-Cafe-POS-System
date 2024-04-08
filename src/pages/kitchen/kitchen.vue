@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { ongoingOrders, loading, fetchsuccess, readyOrders } from "./assets/fetchTransactions";
+import { ongoingOrders, loading, fetchsuccess, readyOrders, updateOrderStatus } from "./assets/fetchTransactions";
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 
@@ -9,39 +9,60 @@ const toast = useToast();
 
 const cancelOrder = (TransID) => {
     confirm.require({
-        message: "Are you sure you want to cancel this order?",
-        header: "Confirmation",
-        icon: "pi pi-exclamation-triangle",
+        group: 'headless',
+        header: 'Are you sure?',
+        message: 'This will cancel the order. Please confirm to proceed.',
         accept: () => {
-            console.log("Order cancelled");
+            toast.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
+            updateOrderStatus(TransID, 5);
         },
         reject: () => {
-            console.log("Order not cancelled");
-        },
+            toast.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+        }
     });
 };
 
 const setStatusReady = (TransID) => {
     confirm.require({
-        message: "Are you sure this order is ready?",
-        header: "Confirmation",
-        icon: "pi pi-exclamation-triangle",
+        group: 'headless',
+        header: 'Are you sure?',
+        message: 'This order will be marked as ready. Please confirm to proceed.',
         accept: () => {
-            console.log("Order ready");
+            toast.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
+            updateOrderStatus(TransID, 2);
         },
         reject: () => {
-            console.log("Order not ready");
-        },
+            toast.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+        }
     });
 };
+
+
+const setStatusComplete = (TransID) => {
+    confirm.require({
+        group: 'headless',
+        header: 'Are you sure?',
+        message: 'This order will be marked as Complete. Please confirm to proceed.',
+        accept: () => {
+            toast.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
+            updateOrderStatus(TransID, 3);
+        },
+        reject: () => {
+            toast.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+        }
+    });
+}
 </script>
 
 <template>
     <div class="relative top-[80px] font-sora px-5 md:px-[43px] xl:grid grid-cols-[2fr,.8fr] "
         style="height: calc(100vh - 80px)">
+        <div v-if="loading" class="fixed z-20 -top-[1px] w-full">
+            <ProgressBar mode="indeterminate" style="height: 6px"></ProgressBar>
+        </div>
         <div class="border-r-0 xl:border-r-2">
             <h1 class="text-[32px] text-black font-bold">Ongoing</h1>
-            <div class="flex flex-row flex-wrap overflow-x-auto " style="height: calc(100vh - 130px)">
+            <div v-if="ongoingOrders.length" class="flex flex-row flex-wrap overflow-x-auto h-[calc(100vh-130px)] ">
                 <!-- card -->
                 <div v-for=" ong in ongoingOrders" :key="ong.TransID"
                     class="w-[413px] m-1 h-fit px-2 py-4 rounded-lg bg-offwhite">
@@ -112,13 +133,15 @@ const setStatusReady = (TransID) => {
                     </div>
                 </div>
             </div>
-
+            <div v-else class="flex flex-row justify-center items-center  h-[calc(100vh-130px)] ">
+                <p class="text-[32px] text-lightgrey font-bold text-center">No ongoing orders</p>
+            </div>
         </div>
         <!-- Ready -->
         <div>
             <h1 class="text-[32px] text-black font-bold pl-0 xl:pl-5">Ready</h1>
-            <div class="flex flex-wrap pl-0 xl:flex-nowrap xl:flex-col xl:space-y-5 xl:pl-5  overflow-auto"
-                style="height: calc(100vh - 130px)">
+            <div v-if="readyOrders.length"
+                class="flex flex-wrap pl-0 xl:flex-nowrap xl:flex-col xl:space-y-5 xl:pl-5  overflow-auto h-[calc(100vh-130px)]">
                 <div v-for="ong in readyOrders" :key="ong.TransID"
                     class="w-[413px] h-fit px-2 py-4 m-2 rounded-lg bg-offwhite">
                     <!-- Name & Order Number -->
@@ -137,10 +160,16 @@ const setStatusReady = (TransID) => {
                                 <p>Payment</p>
                             </div>
                             <div>
-                                <p>{{ ong.OrderDateTime }}</p>
+                                <p>{{ ong.Time }}</p>
                                 <p>{{ ong.OrderType }}</p>
                                 <p>{{ ong.MOP }}</p>
                             </div>
+                        </div>
+                        <div class="flex">
+                            <p>Notes :</p>
+                            <p class="break-all">
+                                {{ ong.Notes }}
+                            </p>
                         </div>
                     </div>
                     <!-- Order -->
@@ -148,12 +177,17 @@ const setStatusReady = (TransID) => {
                         <div class="flex justify-between border-y-2 border-black mb-2">
                             <p>Items</p>
                             <p>Qty</p>
-                            <p>Sub total</p>
+
                         </div>
-                        <div v-for="items in ong.items" :key="items.ProductID" class="flex justify-between">
-                            <p>{{ items.ProductName }}</p>
-                            <p>{{ items.Qty }}</p>
-                            <p>₱ {{ items.Subtotal }}.00</p>
+                        <div v-if="ong.items.length">
+                            <div v-for="items in ong.items" :key="items.ProductID" class="flex justify-between">
+                                <p>{{ items.ProductName }}</p>
+                                <p>{{ items.Qty }}</p>
+
+                            </div>
+                        </div>
+                        <div v-else class="flex justify-center font-bold text-[25px]">
+                            <p>No Items</p>
                         </div>
                     </div>
                     <div class="flex justify-between my-3">
@@ -162,7 +196,8 @@ const setStatusReady = (TransID) => {
                     </div>
                     <!-- buttons -->
                     <div class="flex justify-between items-center">
-                        <Button @click="clearAll" label="Primary" class="group flex flex-col bg-transparent">
+                        <Button @click="cancelOrder(ong.TransID)" label="Primary"
+                            class="group flex flex-col bg-transparent">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 class="w-[24px] h-[24px] stroke-darkgrey group-hover:stroke-accent">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -170,10 +205,13 @@ const setStatusReady = (TransID) => {
                             </svg>
                             <p class="text-darkgrey text-[14px] group-hover:text-accent">Cancel order</p>
                         </Button>
-                        <button
+                        <button @click="setStatusComplete(ong.TransID)"
                             class="px-4 bg-accent hover:bg-primary active:bg-accent text-offwhite rounded-lg py-2">Complete</button>
                     </div>
                 </div>
+            </div>
+            <div v-else class="flex flex-row justify-center items-center  h-[calc(100vh-130px)] ">
+                <p class="text-[32px] text-lightgrey font-bold">No orders ready</p>
             </div>
         </div>
     </div>

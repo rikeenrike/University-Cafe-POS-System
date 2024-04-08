@@ -52,7 +52,7 @@ const authUser = async () => {
 </script>
 
 <template>
-    <div class="font-sora p-5 gap-y-[20%] h-screen flex flex-col items-center select-none">
+    <div class=" font-sora p-5 gap-y-[20%] h-screen flex flex-col items-center select-none">
         <div v-if="loading" class="fixed -top-[1px] w-full">
             <ProgressBar mode="indeterminate" style="height: 6px"></ProgressBar>
         </div>
