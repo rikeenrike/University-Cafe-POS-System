@@ -48,7 +48,7 @@ export default {
             // Colors
             {
                 'border-surface-200 bg-surface-0 dark:border-surface-700 dark:bg-surface-900': !context.active && !props.invalid,
-                'border-primary-500 bg-primary-500 dark:border-primary-400 dark:bg-primary-400': context.active
+                'border-primary bg-primary ': context.active
             },
 
             // Invalid State

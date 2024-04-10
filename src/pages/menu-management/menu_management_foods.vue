@@ -1,33 +1,7 @@
 <script setup>
-import gsap from "gsap";
 import menuloading from "../loading-comps/menuloading.vue";
 import { foodsproducts, loading, fetchsuccess } from "../cashier/scripts/fetchProducts.js";
-
-const editItem = () => {
-
-  gsap.to(".edit", {
-    x: -10,
-    opacity: 1,
-    duration: .5,
-    ease: "power4.out",
-    stagger: 0.2,
-
-  });
-  gsap.to(".editwrapper", {
-    x: 0,
-    opacity: 1,
-    duration: .5,
-    ease: "power4.out",
-    display: "flex",
-    backdropFilter: "blur(5px)",
-  });
-
-};
-
-
-const addItem = () => {
-  console.log("add item");
-};
+import { editItem, addItem } from "./scripts/modifyItems.js";
 </script>
 
 <template>
@@ -50,7 +24,7 @@ const addItem = () => {
         <Accordion :activeIndex="[0, 1]" :multiple="true">
           <AccordionTab v-for="tab in foodsproducts" :key="tab.id" :header="tab.header">
             <div class="-space-x-5 flex overflow-x-auto sm:space-x-1">
-              <div class="mx-5 flex flex-col items-center">
+              <div class="mx-5 flex flex-col items-center" @click="addItem">
                 <div
                   class="bg-offwhite w-16 h-16 sm:w-24 sm:h-24 rounded-full border-2 flex items-center justify-center cursor-pointer hover:border-primary  duration-200">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"

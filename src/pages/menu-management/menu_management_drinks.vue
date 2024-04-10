@@ -1,48 +1,8 @@
 <script setup>
-import gsap from "gsap";
 import menuloading from "../loading-comps/menuloading.vue";
 import { drinksproducts, loading, fetchsuccess } from "../cashier/scripts/fetchProducts.js";
+import { editItem, addItem } from "./scripts/modifyItems.js";
 
-const editItem = () => {
-
-  gsap.to(".edit", {
-    x: -10,
-    opacity: 1,
-    duration: .5,
-    ease: "power4.out",
-    stagger: 0.2,
-
-  });
-  gsap.to(".editwrapper", {
-    x: 0,
-    opacity: 1,
-    duration: .5,
-    ease: "power4.out",
-    display: "flex",
-    backdropFilter: "blur(5px)",
-  });
-};
-
-const addItem = () => {
-
-    gsap.to(".add", {
-      x: -10,
-      opacity: 1,
-      duration: .5,
-      ease: "power4.out",
-      stagger: 0.2,
-
-    });
-    gsap.to(".addwrapper", {
-      x: 0,
-      opacity: 1,
-      duration: .5,
-      ease: "power4.out",
-      display: "flex",
-      backdropFilter: "blur(5px)",
-    });
-  
-};
 
 </script>
 
@@ -81,7 +41,7 @@ const addItem = () => {
                 </div>
               </div>
               <!-- item -->
-              <div v-for="item in tab.items" :key="item.id" @click="editItem" class="flex items-center cursor-pointer">
+              <div v-for="item in tab.items" :key="item.id" @click="editItem(item)" class="flex items-center cursor-pointer">
                 <div class="flex h-full justify-between flex-col items-center relative ">
                   <div class="relative group">
                     <img src="\src\pages\cashier\assets\images.jpg" alt="coffee"

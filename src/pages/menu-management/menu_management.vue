@@ -1,13 +1,10 @@
 <script setup>
 import { ref, computed } from "vue";
-import { addToCart } from "../cashier/scripts/Transaction.js";
 import { productdata } from "../cashier/scripts/fetchProducts.js";
-import { ongoingOrders, readyOrders, loading, fetchsuccess } from "../kitchen/assets/fetchTransactions";
-import statusloading from "../loading-comps/statusloading.vue";
 import popupedit from "../menu-management/popupedit.vue";
 import popupadd from "../menu-management/popupadd.vue";
 import { gsap } from "gsap";
-
+import { loading } from "../cashier/scripts/fetchProducts.js";
 const search = ref("");
 const filteredResults = ref([]);
 const filteredData = computed(() => {
@@ -17,9 +14,9 @@ const filteredData = computed(() => {
 
     return filteredResults.value;
 });
+
 const filterData = () => {
     if (!productdata.value) {
-        isloading.value = false;
         return;
     }
     filteredResults.value = productdata.value.filter(item =>
@@ -50,12 +47,13 @@ const editItem = () => {
 
 
 <template>
+    <div v-if="loading" class="fixed z-20 -top-[1px] w-full">
+        <ProgressBar mode="indeterminate" style="height: 6px"></ProgressBar>
+    </div>
     <popupedit class="fixed z-[9999]" />
     <popupadd class="fixed z-[9999]" />
     <div class="px-5 relative md:px-[43px] font-sora select-none top-[80px] h-[calc(100vh-80px)]">
-        <div v-if="loading" class="fixed z-20 -top-[1px] w-full">
-            <ProgressBar mode="indeterminate" style="height: 6px"></ProgressBar>
-        </div>
+
         <div class="flex flex-col overflow-hidden">
             <!-- search  -->
             <span class="mr-0 lg:mr-5 flex relative ">
