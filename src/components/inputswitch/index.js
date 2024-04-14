@@ -24,13 +24,13 @@ export default {
             'before:h-5 before:w-5',
             'before:rounded-full',
             'before:duration-200',
-            'before:bg-surface-0 before:dark:bg-surface-900',
+            'before:bg-white',
 
             // Colors
             'border',
             {
-                'bg-surface-200 dark:bg-surface-700': !(props.modelValue == props.trueValue),
-                'bg-primary-500 dark:bg-primary-400': props.modelValue == props.trueValue
+                'bg-offwhite': !(props.modelValue == props.trueValue),
+                'bg-primary': props.modelValue == props.trueValue
             },
 
             { 'border-transparent': !props.invalid },

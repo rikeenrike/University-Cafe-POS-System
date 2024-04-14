@@ -24,7 +24,7 @@ import Password from 'primevue/password';
 import ProgressBar from 'primevue/progressbar';
 import ConfirmationService from 'primevue/confirmationservice';
 import ConfirmDialog from 'primevue/confirmdialog';
-import TriStateCheckbox from 'primevue/tristatecheckbox';
+import InputSwitch from 'primevue/inputswitch';
 
 const app = createApp(App);
 app.use(PrimeVue, {
@@ -32,7 +32,7 @@ app.use(PrimeVue, {
   pt: Lara,
 });
 app.use(router);
-app.component("TriStateCheckbox", TriStateCheckbox);
+app.component("InputSwitch", InputSwitch);
 app.component("ConfirmDialog", ConfirmDialog);
 app.component("ProgressBar", ProgressBar);
 app.component("Password", Password);

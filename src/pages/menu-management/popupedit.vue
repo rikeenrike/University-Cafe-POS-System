@@ -1,15 +1,21 @@
 <script setup>
 import { ref, watch } from "vue";
-import { ClosePopup } from "./scripts/modifyItems";
+import { ClosePopup, saveeditItem, loading } from "./scripts/modifyItems";
 import { itemData } from "./scripts/modifyItems";
 
-const value = ref(false);
 
+const insertImage = () => {
+
+};
 </script>
 
 <template>
-    <div class="editwrapper hidden items backdrop-blur-[0px] justify-end pr-0 h-screen w-screen font-sora select-none
+
+    <div class="editwrapper hidden items backdrop-blur-[0px] justify-end items-center pr-0 h-screen w-screen font-sora select-none
         sm:pr-5">
+        <div v-if="loading" class="fixed z-20 -top-[1px] w-full">
+            <ProgressBar mode="indeterminate" style="height: 6px"></ProgressBar>
+        </div>
         <div @click="ClosePopup('.edit', '.editwrapper')" class=" fixed h-screen w-screen flex-grow hidden sm:block">
         </div>
         <div class="py-5 hidden sm:flex">
@@ -31,13 +37,13 @@ const value = ref(false);
                     <div class="flex space-x-3">
                         <img src="\src\pages\cashier\assets\images.jpg" alt="coffee"
                             class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover object-center group-hover:opacity-50">
-                        <div class="flex items-center space-x-1">
+                        <div class="flex items-center space-x-1" @click="insertImage">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" class="w-[20px] h-[20px]">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
                             </svg>
-                            <p class="text-black text-[14px]">Edit Image</p>
+                            <p class="text-black text-[14px] cursor-pointer">Edit Image</p>
                         </div>
                     </div>
                     <div class="py-5">
@@ -49,19 +55,19 @@ const value = ref(false);
                         <InputText size="large" v-model="itemData.Stock" placeholder="Stock" />
                     </div>
                     <div class="flex items-center">
-                        <TriStateCheckbox v-model="value" />
-                        <label for="checkbox">{{ value == null ? 'null' : value }}</label>
-
-                        <label for="isBestSeller" class="ml-2 font-semibold text-black">Set as BestSeller</label>
+                        <InputSwitch v-model="itemData.isBestSeller" />
+                        <label for="isBestSeller" class="ml-2 font-semibold text-black text-[14px]">Set as
+                            BestSeller</label>
                     </div>
                 </div>
                 <!-- BOTTOM ------------------------------------------------>
                 <div class="px-10 my-10 space-y-5 ">
                     <div class="flex justify-between items-center">
-                        <Button label="Primary" class="px-6 h-fit bg-primary hover:bg-accent ">
+                        <Button label="Primary" @click="saveeditItem" class="px-6 h-fit bg-primary hover:bg-accent ">
                             <p class="font-bold text-[20px]">Save</p>
                         </Button>
-                        <Button @click="" label="Primary" class="group flex flex-col bg-transparent">
+                        <Button v-if="!itemData.isDisabled" @click="" label="Primary"
+                            class="group flex flex-col bg-transparent">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 class="w-[24px] h-[24px] stroke-darkgrey group-hover:stroke-accent">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -69,7 +75,14 @@ const value = ref(false);
                             </svg>
                             <p class="text-darkgrey text-[14px] group-hover:text-accent">Disable Item</p>
                         </Button>
-
+                        <Button v-else @click="" label="Primary" class="group flex flex-col bg-transparent">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                class="w-[24px] h-[24px] stroke-darkgrey group-hover:stroke-accent">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" />
+                            </svg>
+                            <p class="text-darkgrey text-[14px] group-hover:text-accent">Re-enable Item</p>
+                        </Button>
                     </div>
                 </div>
             </div>
