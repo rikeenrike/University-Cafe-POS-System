@@ -35,7 +35,7 @@ export const editItem = (item) => {
 export const saveeditItem = async () => {
     console.log(itemData.value)
     try {
-        const response = await axios.put("http://127.0.0.1:8000/api/products/update", itemData.value, {
+        const response = await axios.put("https://universitycafeapi.vercel.app/api/products/update", itemData.value, {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'

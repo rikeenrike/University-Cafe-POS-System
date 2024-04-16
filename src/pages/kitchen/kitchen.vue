@@ -1,9 +1,9 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { ongoingOrders, loading, fetchsuccess, readyOrders, updateOrderStatus } from "./assets/fetchTransactions";
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
-
+import { fetchOrders } from "./assets/fetchTransactions";
 const confirm = useConfirm();
 const toast = useToast();
 
@@ -52,6 +52,10 @@ const setStatusComplete = (TransID) => {
         }
     });
 }
+
+onMounted(() => {
+    fetchOrders()
+})
 </script>
 
 <template>

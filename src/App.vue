@@ -10,7 +10,6 @@ onMounted(() => {
   fetchFoodsProducts()
   fetchDrinksProducts()
   fetchproducts()
-  fetchOrders()
   fetchLastTransID()
 })
 </script>
