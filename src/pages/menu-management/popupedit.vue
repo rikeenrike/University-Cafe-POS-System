@@ -1,17 +1,15 @@
 <script setup>
-import { ref, watch } from "vue";
-import { ClosePopup, saveeditItem, loading } from "./scripts/modifyItems";
-import { itemData } from "./scripts/modifyItems";
+import { ref, watch, } from "vue";
+import { ClosePopup, saveeditItem, itemData, loading } from "./scripts/modifyItems";
 
-
-const insertImage = () => {
-
-};
 </script>
 
 <template>
     <div class="editwrapper hidden items backdrop-blur-[0px] justify-end items-center pr-0 h-screen w-screen font-sora select-none
-        sm:pr-5">
+        sm:">
+        <div v-if="loading" class="fixed z-20 -top-[1px]  w-full h-full">
+            <ProgressBar mode="indeterminate" style="height: 6px"></ProgressBar>
+        </div>
         <div @click="ClosePopup('.edit', '.editwrapper')" class=" fixed h-screen w-screen flex-grow hidden sm:block">
         </div>
         <div class="py-5 hidden sm:flex">

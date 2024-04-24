@@ -53,14 +53,8 @@ const finalOrders = computed(() => {
 
 const handleTransaction = async () => {
     try {
-        await axios.post("https://universitycafeapi.vercel.app/api/transactions", newTransaction.value, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }
-        });
+        await axios.post("https://universitycafeapi.vercel.app/api/transactions", newTransaction.value);
         toast.add({ severity: 'success', summary: 'Order Placed', detail: 'Order has been placed', group: 'bc', life: 2000 });
-
     } catch (error) {
         console.log(error);
     } finally {
