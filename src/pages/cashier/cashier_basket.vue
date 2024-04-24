@@ -53,7 +53,7 @@ const finalOrders = computed(() => {
 
 const handleTransaction = async () => {
     try {
-        await axios.post("http://127.0.0.1:8000/api/transactions", newTransaction.value, {
+        await axios.post("https://universitycafeapi.vercel.app/api/transactions", newTransaction.value, {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
