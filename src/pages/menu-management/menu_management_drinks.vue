@@ -1,7 +1,7 @@
 <script setup>
 import menuloading from "../loading-comps/menuloading.vue";
 import { drinksproducts, loading, fetchsuccess } from "../cashier/scripts/fetchProducts.js";
-import { editItem, addItem } from "./scripts/modifyItems.js";
+import { editItem, addItem, addSubItem } from "./scripts/modifyItems.js";
 
 
 </script>
@@ -16,7 +16,7 @@ import { editItem, addItem } from "./scripts/modifyItems.js";
       </div>
       <div v-if="fetchsuccess">
         <!-- add subcategory button -->
-        <div class="h-[100px] border-[3px] mb-1 pl-5 border-offwhite hover:border-primary duration-200 rounded-md flex items-center cursor-pointer">
+        <div @click="addSubItem" class="h-[100px] border-[3px] mb-1 pl-5 border-offwhite hover:border-primary duration-200 rounded-md flex items-center cursor-pointer">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
             class="w-6 h-6 mr-2 text-lightgrey">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -27,7 +27,7 @@ import { editItem, addItem } from "./scripts/modifyItems.js";
           <AccordionTab v-for="tab in drinksproducts" :key="tab.id" :header="tab.header">
             <div class="-space-x-5 flex overflow-x-auto sm:space-x-1">
               <!-- add item button -->
-              <div class="mx-5 flex flex-col items-center" @click="addItem">
+              <div class="mx-5 flex flex-col items-center" @click="addItem(tab)">
                 <div
                   class="bg-offwhite w-16 h-16 sm:w-24 sm:h-24 rounded-full border-2 flex items-center justify-center cursor-pointer hover:border-primary  duration-200">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"

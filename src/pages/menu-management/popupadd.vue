@@ -1,15 +1,15 @@
 <script setup>
-import { ClosePopup, itemData } from "./scripts/modifyItems";
+import { ClosePopup, newItem, saveNewItem } from "./scripts/modifyItems";
 
 
 </script>
 
 <template>
-    <div
-        class="addwrapper hidden items backdrop-blur-[0px] justify-end pr-0 h-screen w-screen font-sora select-none sm:pr-5">
+    <div class="addwrapper hidden items backdrop-blur-[0px] justify-end items-center pr-0 h-screen w-screen font-sora select-none
+        sm:pr-5">
         <div @click="ClosePopup('.add', '.addwrapper')" class=" fixed h-screen w-screen flex-grow hidden sm:block">
         </div>
-        <div class="py-10 hidden sm:flex">
+        <div class="py-5 hidden sm:flex">
             <div class="add shadow-2xl flex flex-col w-[500px] bg-white opacity-0 rounded-[30px] overflow-hidden">
                 <!-- TOP ------------------------------------------------>
                 <div class="flex items-center justify-between border-b-2 px-10 py-5">
@@ -23,7 +23,7 @@ import { ClosePopup, itemData } from "./scripts/modifyItems";
                     </Button>
                 </div>
                 <!-- MIDDLE ------------------------------------------------>
-                <div class="px-[40px] font-bold text-[20px] border-b-2 py-10 h-3/5 overflow-hidden">
+                <div class="px-[40px] py-5 font-bold text-[20px] border-b-2 overflow-hidden">
                     <div class="flex space-x-3">
                         <img src="\src\pages\cashier\assets\images.jpg" alt="coffee"
                             class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover object-center group-hover:opacity-50">
@@ -38,18 +38,18 @@ import { ClosePopup, itemData } from "./scripts/modifyItems";
                     </div>
                     <div class="py-5">
                         <label class="text-[14px] font-semibold">Product name</label>
-                        <InputText size="large" v-model="itemData.ProductName" placeholder="Product Name" />
+                        <InputText size="large" v-model="newItem.ProductName" placeholder="Product Name" />
                         <label class="text-[14px] font-semibold">Unit Price</label>
-                        <InputText size="large" v-model="itemData.UnitPrice" placeholder="Price" />
+                        <InputText size="large" v-model="newItem.UnitPrice" placeholder="Price" />
                         <label class="text-[14px] font-semibold">Stock</label>
-                        <InputText size="large" v-model="itemData.Stock" placeholder="Stock" />
+                        <InputText size="large" v-model="newItem.Stock" placeholder="Stock" />
                     </div>
                 </div>
                 <!-- BOTTOM ------------------------------------------------>
                 <div class="px-10 my-10 space-y-5">
                     <div>
-                        <Button label="Primary" class="w-full h-fit bg-primary hover:bg-accent ">
-                            <p class="font-bold text-[20px]">Checkout</p>
+                        <Button @click="saveNewItem" label="Primary" class="w-full h-fit bg-primary hover:bg-accent ">
+                            <p class="font-bold text-[20px]">Save</p>
                         </Button>
                     </div>
                 </div>

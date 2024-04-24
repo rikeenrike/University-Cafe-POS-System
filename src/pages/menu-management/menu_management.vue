@@ -3,6 +3,7 @@ import { ref, computed } from "vue";
 import { productdata } from "../cashier/scripts/fetchProducts.js";
 import popupedit from "../menu-management/popupedit.vue";
 import popupadd from "../menu-management/popupadd.vue";
+import popupaddsubcategory from "../menu-management/popupaddsubcategory.vue";
 import { gsap } from "gsap";
 import { loading } from "../cashier/scripts/fetchProducts.js";
 const search = ref("");
@@ -52,6 +53,8 @@ const editItem = () => {
     </div>
     <popupedit class="fixed z-[9999]" />
     <popupadd class="fixed z-[9999]" />
+    <popupaddsubcategory class="fixed z-[9999]" />
+  
     <div class="px-5 relative md:px-[43px] font-sora select-none top-[80px] h-[calc(100vh-80px)]">
 
         <div class="flex flex-col overflow-hidden">
