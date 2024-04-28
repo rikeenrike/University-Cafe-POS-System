@@ -1,7 +1,7 @@
 <script setup>
 import menuloading from "../loading-comps/menuloading.vue";
 import { foodsproducts, loading, fetchsuccess } from "../cashier/scripts/fetchProducts.js";
-import { editItem, addItem } from "./scripts/modifyItems.js";
+import { editItem, addSub , addItem } from "./scripts/modifyItems.js";
 </script>
 
 <template>
@@ -13,7 +13,8 @@ import { editItem, addItem } from "./scripts/modifyItems.js";
         <menuloading />
       </div>
       <div v-if="fetchsuccess">
-        <div
+        <!-- add subcategory button -->
+        <div @click="addSub(2)"
           class="h-[100px] border-[3px] mb-1 pl-5 border-offwhite hover:border-primary duration-200 rounded-md flex items-center cursor-pointer">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
             class="w-6 h-6 mr-2 text-lightgrey">
@@ -24,7 +25,8 @@ import { editItem, addItem } from "./scripts/modifyItems.js";
         <Accordion :activeIndex="[0, 1]" :multiple="true">
           <AccordionTab v-for="tab in foodsproducts" :key="tab.id" :header="tab.header">
             <div class="-space-x-5 flex overflow-x-auto sm:space-x-1">
-              <div class="mx-5 flex flex-col items-center" @click="addItem">
+              <!-- add item button -->
+              <div class="mx-5 flex flex-col items-center" @click="addItem(tab)">
                 <div
                   class="bg-offwhite w-16 h-16 sm:w-24 sm:h-24 rounded-full border-2 flex items-center justify-center cursor-pointer hover:border-primary  duration-200">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -38,8 +40,9 @@ import { editItem, addItem } from "./scripts/modifyItems.js";
                 </div>
               </div>
               <!-- item -->
-              <div v-for="item in tab.items" :key="item.id" @click='editItem' class="flex items-center cursor-pointer">
-                <div class="flex h-full justify-between flex-col items-center relative ">
+              <div v-for="item in tab.items" :key="item.id" @click='editItem(item)'
+                class="flex items-center cursor-pointer">
+                <div v-if="!item.isDisabled" class="flex h-full justify-between flex-col items-center relative ">
                   <img src="\src\pages\cashier\assets\images.jpg" alt="coffee"
                     class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover object-center">
 
@@ -49,6 +52,19 @@ import { editItem, addItem } from "./scripts/modifyItems.js";
                   </div>
                   <div class="text-[12px]  font-semibold text-lightgrey">₱{{ item.UnitPrice }}.00
                   </div>
+                </div>
+                <div v-else class="flex h-full justify-between flex-col items-center relative ">
+
+                  <img src="\src\pages\cashier\assets\images.jpg" alt="coffee"
+                    class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover object-center opacity-50">
+                  <div
+                    class="flex justify-center items-center leading-none py-2 w-[175px] text-clamp4 font-regular text-center text-black opacity-50">
+                    {{ item.ProductName }}
+                  </div>
+                  <div class="text-[12px]  font-semibold text-lightgrey opacity-50">₱{{ item.UnitPrice }}.00
+                  </div>
+                  <Badge value="Disabled" class="bg-accent"></Badge>
+
                 </div>
               </div>
 

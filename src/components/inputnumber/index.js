@@ -28,7 +28,7 @@ export default {
                 { 'text-center': parent.props.showButtons && parent.props.buttonLayout == 'vertical' },
 
                 // Spacing
-                'p-3',
+                'p-4',
                 'm-0',
 
                 // Shape
@@ -42,17 +42,17 @@ export default {
 
                 // Colors
                 'text-surface-600 dark:text-surface-200',
-                'placeholder:text-surface-400 dark:placeholder:text-surface-500',
-                'bg-surface-0 dark:bg-surface-900',
+                'placeholder:text-lightgrey ',
+                'bg-offwhite',
                 'border',
-                { 'border-surface-300 dark:border-surface-600': !parent.props.invalid },
+                { 'border-white': !parent.props.invalid },
 
                 // Invalid State
-                { 'border-red-500 dark:border-red-400': parent.props.invalid },
+                { 'border-red-500': parent.props.invalid },
 
                 // States
-                { 'hover:border-primary-500 dark:hover:border-primary-400': !parent.props.invalid },
-                'focus:outline-none focus:outline-offset-0 focus:ring focus:ring-accent dark:focus:ring-accent focus:z-10',
+                { 'border-red-500': !parent.props.invalid },
+                'focus:outline-none focus:outline-offset-0 focus:ring focus:ring-white dark:focus:ring-white focus:z-10',
                 { 'opacity-60 select-none pointer-events-none cursor-default': context.disabled },
 
                 // Filled State *for FloatLabel

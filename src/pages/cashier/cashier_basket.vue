@@ -3,7 +3,7 @@ import { ref, computed } from "vue";
 import { gsap } from "gsap";
 import { Orders } from "./scripts/Transaction.js";
 import { useToast } from "primevue/usetoast";
-import { lastTransID, loading } from "../kitchen/assets/fetchTransactions";
+
 import axios from "axios";
 
 const toast = useToast();
@@ -16,7 +16,6 @@ const paymentType = ref(0);
 const total = ref(0);
 const notes = ref("");
 
-
 const DateTime = () => {
     const now = new Date();
     const options = { timeZone: 'Asia/Manila', hour24: false };
@@ -27,20 +26,20 @@ const DateTime = () => {
         Time: formattedTime,
     };
 };
+
 const dateTime = DateTime();
 
 const newTransaction = computed(() => ({
-    AccountID: 3,
-    AdditionalFee: additionalFees.value,
-    Alias: customerName.value,
-    Date: dateTime.Date,
-    MopID: paymentType.value,
-    OrderTypeID: orderType.value,
-    StatusID: 1,
-    Time: dateTime.Time,
-    Total: total.value,
-    Notes: notes.value,
-    Orders: finalOrders.value,
+        AdditionalFee: additionalFees.value,
+        Alias: customerName.value,
+        Date: dateTime.Date,
+        MopID: paymentType.value,
+        Notes: notes.value,
+        OrderTypeID: orderType.value,
+        Orders: finalOrders.value,
+        StatusID: 1,
+        Time: dateTime.Time,
+        Total: total.value,
 }));
 
 const finalOrders = computed(() => {
@@ -52,8 +51,11 @@ const finalOrders = computed(() => {
 });
 
 const handleTransaction = async () => {
+    console.log(newTransaction.value);
     try {
-        await axios.post("https://universitycafeapi.vercel.app/api/transactions", newTransaction.value);
+        await axios.post("http://127.0.0.1:8000/api/transactions", newTransaction.value, {
+            withCredentials: true
+        });
         toast.add({ severity: 'success', summary: 'Order Placed', detail: 'Order has been placed', group: 'bc', life: 2000 });
     } catch (error) {
         console.log(error);
@@ -100,7 +102,7 @@ const increaseQuantity = (item) => {
         return;
     }
     item.quantity++
-    updateSubTotal();
+    calculateSubTotal();
 };
 const decrementQuantity = (item) => {
     if (item.quantity === null) {
@@ -111,17 +113,16 @@ const decrementQuantity = (item) => {
         const index = Orders.value.indexOf(item);
         Orders.value.splice(index, 1);
     }
-    updateSubTotal();
+    calculateSubTotal();
 };
-const updateSubTotal = () => {
+const calculateSubTotal = () => {
     Orders.value.forEach((item) => {
         item.Subtotal = item.quantity * item.price;
     });
 };
 const calculateTotal = computed(() => {
     let itemsTotal = Orders.value.reduce((total, item) => total + (item.price * item.quantity), 0);
-    total.value = itemsTotal + additionalFees.value;
-    return total.value;
+    return total.value = itemsTotal + additionalFees.value;
 });
 const totalItems = computed(() => {
     return Orders.value.reduce((total, item) => total + item.quantity, 0);
@@ -160,8 +161,6 @@ const toggleBasket = () => {
                         <img src="./assets/icons/edit.svg" alt="" class="w-6 h-6 cursor-pointer"
                             @click="isEditing = true">
                     </h1>
-                    <Skeleton v-if="loading" width="70px" height="1.5rem" borderRadius="5px"></Skeleton>
-                    <h2 v-else class="font-regular text-[16px]">Order#{{ lastTransID.TransID }}</h2>
                 </span>
                 <!-- clear button -->
                 <Button @click="clearAll" label="Primary" class="group flex flex-col bg-transparent">
@@ -221,7 +220,8 @@ const toggleBasket = () => {
             <div class="px-5 my-5 space-y-5">
                 <div class="flex justify-between items-center">
                     <p>Additional fees</p>
-                    <InputNumber class="w-20 h-10" size="small" v-model="additionalFees" placeholder="₱" />
+                    <InputNumber class="w-20 h-10 " size="small" v-model="additionalFees" placeholder="₱"
+                        inputId="minmax" :min="0" />
                 </div>
                 <div class="flex justify-between font-bold text-[20px]">
                     <p>Total Price</p>
@@ -319,8 +319,6 @@ const toggleBasket = () => {
                                 d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
                         </svg>
                     </h1>
-                    <Skeleton v-if="loading" width="70px" height="1.5rem" borderRadius="5px"></Skeleton>
-                    <h2 v-else class="font-regular text-[16px]">Order#{{ lastTransID.TransID }}</h2>
                 </span>
                 <!-- back button -->
                 <div @click="toggleBasket">

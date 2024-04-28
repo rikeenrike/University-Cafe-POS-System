@@ -1,20 +1,52 @@
 <script setup>
-import { ClosePopup, newItem, saveNewItem } from "./scripts/modifyItems";
+import { ref } from 'vue'
+import { ClosePopup, newItem, loading } from "./scripts/modifyItems";
+import { useToast } from "primevue/usetoast";
+import axios from "axios";
 
+const toast = useToast();
+const isInputValid = ref(false);
+const saveNewItem = async () => {
+    if (newItem.value.ProductName === "" || newItem.value.UnitPrice === "" || newItem.value.Stock === "") {
+        isInputValid.value = true;
+        toast.add({ severity: "error", summary: "Error", detail: "Please fill in all fields", group: 'bc', life: 2000 });
+        return;
+    } else {
+        isInputValid.value = false;
+    }
+    loading.value = true;
+    try {
+        const response = await axios.post("http://127.0.0.1:8000/api/products/add", newItem.value)
+        if (response) {
+            const data = await response.data;
+            console.log(data);
+            toast.add({ severity: 'success', summary: 'Item added!', detail: 'Item has been successfully added', group: 'bc', life: 2000 });
+        }else {
+            throw new Error('Request failed');
+        }
+    } catch(error) {
+        console.error(error);
+        toast.add({ severity: "error", summary: "Error", detail: "Changes were not made", group: 'bc', life: 2000 });
+    } finally {
+        loading.value = false
+    }
+    ClosePopup(".add", ".addwrapper")
+}
 
 </script>
 
 <template>
     <div class="addwrapper hidden items backdrop-blur-[0px] justify-end items-center pr-0 h-screen w-screen font-sora select-none
         sm:pr-5">
-        <div @click="ClosePopup('.add', '.addwrapper')" class=" fixed h-screen w-screen flex-grow hidden sm:block">
+        <div @click="ClosePopup('.add', '.addwrapper'); isInputValid = false"
+            class=" fixed h-screen w-screen flex-grow hidden sm:block">
         </div>
         <div class="py-5 hidden sm:flex">
             <div class="add shadow-2xl flex flex-col w-[500px] bg-white opacity-0 rounded-[30px] overflow-hidden">
                 <!-- TOP ------------------------------------------------>
                 <div class="flex items-center justify-between border-b-2 px-10 py-5">
                     <h1 class="font-bold text-[24px]">Add Item</h1>
-                    <Button label="Primary" @click="ClosePopup('.add', '.addwrapper')"
+                    <Button label="Primary" @click="ClosePopup('.add', '.addwrapper'); isInputValid = false"
                         class="bg-white hover:bg-offwhite duration-400">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor" class="w-6 h-6 text-black">
@@ -38,11 +70,18 @@ import { ClosePopup, newItem, saveNewItem } from "./scripts/modifyItems";
                     </div>
                     <div class="py-5">
                         <label class="text-[14px] font-semibold">Product name</label>
-                        <InputText size="large" v-model="newItem.ProductName" placeholder="Product Name" />
-                        <label class="text-[14px] font-semibold">Unit Price</label>
-                        <InputText size="large" v-model="newItem.UnitPrice" placeholder="Price" />
-                        <label class="text-[14px] font-semibold">Stock</label>
-                        <InputText size="large" v-model="newItem.Stock" placeholder="Stock" />
+                        <InputText size="large" v-model="newItem.ProductName" placeholder="Product Name"
+                            :invalid="isInputValid" />
+                        <div class="flex flex-col ">
+                            <label class="text-[14px] font-semibold">Unit Price</label>
+                            <InputNumber size="small" v-model="newItem.UnitPrice" placeholder="Price" inputId="minmax"
+                                :min="0" :invalid="isInputValid" />
+                        </div>
+                        <div div class="flex flex-col ">
+                            <label class="text-[14px] font-semibold">Stock</label>
+                            <InputNumber size="small" v-model="newItem.Stock" placeholder="Stock" inputId="minmax"
+                                :min="0" :invalid="isInputValid" />
+                        </div>
                     </div>
                 </div>
                 <!-- BOTTOM ------------------------------------------------>

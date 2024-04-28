@@ -8,7 +8,7 @@ export const fetchsuccess = ref(false);
 
 export const fetchOrders = async () => {
     try {
-        const response = await axios.get(`https://universitycafeapi.vercel.app/api/transactions/kitchen/statusgetter`);
+        const response = await axios.get(`http://127.0.0.1:8000/api/transactions/kitchen/statusgetter`);
         const data = response.data;
 
         ongoingOrders.value = data.filter(order => order.Status === 1);
@@ -25,20 +25,10 @@ export const fetchOrders = async () => {
 
 export const updateOrderStatus = async (TransID, StatusID) => {
     try {
-        const response = await axios.put(`https://universitycafeapi.vercel.app/api/transactions/${TransID}/${StatusID}/statussetter`);
+        const response = await axios.put(`http://127.0.0.1:8000/api/transactions/${TransID}/${StatusID}/statussetter`);
     } catch (error) {
         console.error(error);
     }
 }
 
-export var lastTransID = ref(0);
 
-export const fetchLastTransID = async () => {
-    try {
-        const response = await axios.get("https://universitycafeapi.vercel.app/api/transactions/account/lastID");
-        lastTransID.value = response.data
-        loading.value = false;
-    } catch (error) {
-        console.error(error);
-    }
-};

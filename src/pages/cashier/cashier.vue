@@ -1,11 +1,11 @@
 <script setup>
 import basket from "./cashier_basket.vue";
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { addToCart } from "./scripts/Transaction.js";
 import { productdata } from "./scripts/fetchProducts.js";
 import { ongoingOrders, readyOrders , loading, fetchsuccess } from "../kitchen/assets/fetchTransactions";
 import statusloading from "../loading-comps/statusloading.vue";
-
+import axios from "axios";
 const search = ref("");
 const filteredResults = ref([]);
 const filteredData = computed(() => {
@@ -24,6 +24,7 @@ const filterData = () => {
     item.ProductName.toLowerCase().includes(search.value.toLowerCase())
   );
 };
+
 
 </script>
 

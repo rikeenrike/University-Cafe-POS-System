@@ -1,6 +1,10 @@
 <script setup>
 import { ref } from "vue";
 import { gsap } from "gsap";
+import axios from "axios";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 const sidebarmenu = ref(false);
 
 
@@ -13,6 +17,7 @@ const toggleBasket = () => {
     console.log("basket");
 };
 const menu = ref();
+
 const toggle = (event) => {
     menu.value.toggle(event);
     console.log("toggle");
@@ -20,6 +25,21 @@ const toggle = (event) => {
 const items = ref([
     {
         label: "Logout",
+        command: async () => {
+            console.log("logout");
+            try{
+                const response = await axios.post(`http://127.0.0.1:8000/api/accounts/logout`,{
+                    withCredentials: true
+                });
+                if (response.status === 200) {
+                    router.push('/')
+                }else{
+                    console.log('error')
+                }
+            }catch (error) {
+                console.error(error)
+            }
+        },
     },
 ]);
 </script>

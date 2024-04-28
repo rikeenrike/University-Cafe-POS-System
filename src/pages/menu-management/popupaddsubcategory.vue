@@ -1,14 +1,40 @@
 <script setup>
-import { ClosePopup, newSubCategory, addSubcategory } from "./scripts/modifyItems";
+import { ref } from 'vue'
+import { ClosePopup, newSubCategory } from "./scripts/modifyItems";
+import { useToast } from "primevue/usetoast";
+import axios from "axios";
 
-
-
+const toast = useToast();
+const isInputValid = ref(false);
+const addSubcategory = async () => {
+    if (newSubCategory.value.SubCategory === "") {
+        isInputValid.value = true;
+        toast.add({ severity: "error", summary: "Error", detail: "Please fill in all fields", group: 'bc', life: 2000 });
+        return;
+    }else{
+        isInputValid.value = false;
+    }
+    try {
+        const response = await axios.post("http://127.0.0.1:8000/api/product_sub_category", newSubCategory.value)
+        if(response){
+            const data = await response.data;
+            console.log(data);
+            toast.add({ severity: 'success', summary: 'Subcategory Added!', detail: 'Subcategory has been successfully added', group: 'bc', life: 2000 });
+        }else {
+            throw new Error('Request failed');
+        }
+    } catch (error) {
+        toast.add({ severity: "error", summary: "Error", detail: "Changes were not made", group: 'bc', life: 2000 });
+        console.error(error);
+    }
+    ClosePopup(".addsub", ".addsubwrapper")
+}   
 </script>
 
 <template>
     <div class="addsubwrapper hidden items backdrop-blur-[0px] justify-end items-center pr-0 h-screen w-screen font-sora select-none
         sm:pr-5">
-        <div @click="ClosePopup('.addsub', '.addsubwrapper')"
+        <div @click="ClosePopup('.addsub', '.addsubwrapper'); isInputValid = false"
             class=" fixed h-screen w-screen flex-grow hidden sm:block">
         </div>
         <div class="py-5 hidden sm:flex">
@@ -16,7 +42,7 @@ import { ClosePopup, newSubCategory, addSubcategory } from "./scripts/modifyItem
                 <!-- TOP ------------------------------------------------>
                 <div class="flex items-center justify-between border-b-2 px-10 py-5">
                     <h1 class="font-bold text-[24px]">Add subcategory</h1>
-                    <Button label="Primary" @click="ClosePopup('.addsub', '.addsubwrapper')"
+                    <Button label="Primary" @click="ClosePopup('.addsub', '.addsubwrapper'); isInputValid = false"
                         class="bg-white hover:bg-offwhite duration-400">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor" class="w-6 h-6 text-black">
@@ -40,13 +66,15 @@ import { ClosePopup, newSubCategory, addSubcategory } from "./scripts/modifyItem
                     </div>
                     <div class="py-5">
                         <label class="text-[14px] font-semibold">Sub Category Name</label>
-                        <InputText size="large" v-model="newSubCategory.SubCategory" placeholder="Sub Category Name" />
+                        <InputText size="large" v-model="newSubCategory.SubCategory" placeholder="Sub Category Name"
+                            :invalid="isInputValid" />
                     </div>
                 </div>
                 <!-- BOTTOM ------------------------------------------------>
                 <div class="px-10 my-10 space-y-5">
                     <div>
-                        <Button @click="addSubcategory()" label="Primary" class="w-full h-fit bg-primary hover:bg-accent ">
+                        <Button @click="addSubcategory()" label="Primary"
+                            class="w-full h-fit bg-primary hover:bg-accent ">
                             <p class="font-bold text-[20px]">Save</p>
                         </Button>
                     </div>

@@ -51,10 +51,10 @@ const editItem = () => {
     <div v-if="loading" class="fixed z-20 -top-[1px] w-full">
         <ProgressBar mode="indeterminate" style="height: 6px"></ProgressBar>
     </div>
-    <popupedit class="fixed z-[9999]" />
-    <popupadd class="fixed z-[9999]" />
-    <popupaddsubcategory class="fixed z-[9999]" />
-  
+    <popupedit class="fixed z-[999]" />
+    <popupadd class="fixed z-[999]" />
+    <popupaddsubcategory class="fixed z-[999]" />
+    
     <div class="px-5 relative md:px-[43px] font-sora select-none top-[80px] h-[calc(100vh-80px)]">
 
         <div class="flex flex-col overflow-hidden">

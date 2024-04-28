@@ -7,7 +7,7 @@ export const fetchsuccess = ref(true);
 
 export const fetchDrinksProducts = async () => {
     try {
-        const response = await axios.get("https://universitycafeapi.vercel.app/api/products/maincategories/1");
+        const response = await axios.get("http://127.0.0.1:8000/api/products/maincategories/1");
         drinksproducts.value = response.data;
         fetchsuccess.value = true;
     } catch (error) {
@@ -20,7 +20,7 @@ export const fetchDrinksProducts = async () => {
 
 export const fetchFoodsProducts = async () => {
     try {
-        const response = await axios.get("https://universitycafeapi.vercel.app/api/products/maincategories/2");
+        const response = await axios.get("http://127.0.0.1:8000/api/products/maincategories/2");
         foodsproducts.value = response.data;
         fetchsuccess.value = true;
     } catch (error) {
@@ -34,7 +34,7 @@ export const fetchFoodsProducts = async () => {
 export var productdata = ref([]);
 export const fetchproducts = async () => {
     try {
-        const response = await axios.get("https://universitycafeapi.vercel.app/api/products");
+        const response = await axios.get("http://127.0.0.1:8000/api/products");
         productdata.value = response.data;
     } catch (error) {
         console.log(error);

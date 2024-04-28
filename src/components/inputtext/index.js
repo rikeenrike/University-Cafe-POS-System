@@ -35,7 +35,7 @@ export default {
       "text-black dark:text-surface-200",
       "placeholder:text-lightgrey",
       "bg-offwhite dark:bg-surface-900",
-
+      "border border-white",
       // Invalid State
       { "border-red-500 dark:border-red-400": props.invalid },
 

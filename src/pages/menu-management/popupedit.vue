@@ -1,7 +1,101 @@
 <script setup>
-import { ref, watch, } from "vue";
-import { ClosePopup, saveeditItem, itemData, loading } from "./scripts/modifyItems";
+import { ref } from 'vue'
+import { ClosePopup, itemData, loading } from "./scripts/modifyItems";
+import { useToast } from "primevue/usetoast";
+import { useConfirm } from "primevue/useconfirm";
+import axios from "axios";
 
+const confirm = useConfirm();
+const toast = useToast();
+
+const isInputValid = ref(false);
+const saveeditItem = async () => {
+    if (itemData.value.ProductName === "" || itemData.value.UnitPrice === "" || itemData.value.Stock === "") {
+        isInputValid.value = true;
+        toast.add({ severity: "error", summary: "Error", detail: "Please fill in all fields", group: 'bc', life: 2000 });
+        return;
+    } else {
+        isInputValid.value = false;
+    }
+    loading.value = true
+    try {
+        const response = await axios.put("http://127.0.0.1:8000/api/products/update", itemData.value);
+        if (response) {
+            const data = await response.data;
+            console.log(data);
+            toast.add({ severity: 'success', summary: 'Item Saved!', detail: 'Item has been successfully edited', group: 'bc', life: 2000 });
+        } else {
+            throw new Error('Request failed');
+        }
+    } catch (error) {
+        console.error(error);
+        toast.add({ severity: "error", summary: "Error", detail: "Changes were not made", group: 'bc', life: 2000 });
+    } finally {
+        loading.value = false;
+    }
+    ClosePopup(".edit", ".editwrapper")
+};
+
+
+const disableItem = () => {
+    confirm.require({
+        group: 'headless',
+        header: 'Are you sure?',
+        message: 'This will disable the product and will not be displayed on the menu. Please confirm to proceed.',
+        accept: async () => {
+            loading.value = true;   
+            try {
+            const response = await axios.put(`http://127.0.0.1:8000/api/products/disable/${itemData.value.ProductID}`);                
+                if (response) {
+                    const data = await response.data;
+                    console.log(data);
+                    toast.add({ severity: 'success', summary: 'Item Disabled!', detail: 'Item has been successfully disabled', group: 'bc', life: 2000 });
+                } else {
+                    throw new Error('Request failed');
+                }
+            } catch (error) {
+                console.error(error);
+                toast.add({ severity: "error", summary: "Error", detail: "Changes were not made", group: 'bc', life: 2000 });
+            }finally {
+                loading.value = false;
+            }
+            ClosePopup(".edit", ".editwrapper")
+        },
+        reject: () => {
+            toast.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+        }
+    });
+};
+
+const reenableItem = () => {
+    confirm.require({
+        group: 'headless',
+        header: 'Are you sure?',
+        message: 'This will re-enable the product and will be displayed on the menu. Please confirm to proceed.',
+        accept: async () => {
+            loading.value = true;
+            try {
+                const response = await axios.put(`http://127.0.0.1:8000/api/products/enable/${itemData.value.ProductID}`);
+                if (response) {
+                    const data = await response.data;
+                    console.log(data);
+                    toast.add({ severity: 'success', summary: 'Item Re-enabled!', detail: 'Item has been successfully re-enabled', group: 'bc', life: 2000 });
+                } else {
+                    throw new Error('Request failed');
+                }
+            } catch (error) {
+                console.error(error);
+                toast.add({ severity: "error", summary: "Error", detail: "Changes were not made", group: 'bc', life: 2000 });
+            } finally {
+                loading.value = false;
+            }
+            ClosePopup(".edit", ".editwrapper")
+        },
+        reject: () => {
+            toast.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+        }
+    });
+};
 </script>
 
 <template>
@@ -10,7 +104,8 @@ import { ClosePopup, saveeditItem, itemData, loading } from "./scripts/modifyIte
         <div v-if="loading" class="fixed z-20 -top-[1px]  w-full h-full">
             <ProgressBar mode="indeterminate" style="height: 6px"></ProgressBar>
         </div>
-        <div @click="ClosePopup('.edit', '.editwrapper')" class=" fixed h-screen w-screen flex-grow hidden sm:block">
+        <div @click="ClosePopup('.edit', '.editwrapper'); isInputValid = false"
+            class=" fixed h-screen w-screen flex-grow hidden sm:block">
         </div>
         <div class="py-5 hidden sm:flex">
             <div
@@ -18,7 +113,7 @@ import { ClosePopup, saveeditItem, itemData, loading } from "./scripts/modifyIte
                 <!-- TOP ------------------------------------------------>
                 <div class="flex items-center justify-between border-b-2 px-10 py-5">
                     <h1 class="font-bold text-[24px]">Edit Item</h1>
-                    <Button label="Primary" @click="ClosePopup('.edit', '.editwrapper')"
+                    <Button label="Primary" @click="ClosePopup('.edit', '.editwrapper'); isInputValid = false"
                         class="bg-white hover:bg-offwhite duration-400">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor" class="w-6 h-6 text-black">
@@ -42,11 +137,19 @@ import { ClosePopup, saveeditItem, itemData, loading } from "./scripts/modifyIte
                     </div>
                     <div class="py-5">
                         <label class="text-[14px] font-semibold">Product name</label>
-                        <InputText size="large" v-model="itemData.ProductName" placeholder="Product Name" />
-                        <label class="text-[14px] font-semibold">Unit Price</label>
-                        <InputText size="large" v-model="itemData.UnitPrice" placeholder="Price" />
-                        <label class="text-[14px] font-semibold">Stock</label>
-                        <InputText size="large" v-model="itemData.Stock" placeholder="Stock" />
+                        <InputText size="large" v-model="itemData.ProductName" placeholder="Product Name"
+                            :invalid="isInputValid" />
+                        <div class="flex flex-col ">
+                            <label class="text-[14px] font-semibold">Unit Price</label>
+                            <InputNumber size="small" v-model="itemData.UnitPrice" placeholder="Price" inputId="minmax"
+                                :min="0" :invalid="isInputValid" />
+                        </div>
+                        <div div class="flex flex-col ">
+                            <label class="text-[14px] font-semibold">Stock</label>
+                            <InputNumber size="small" v-model="itemData.Stock" placeholder="Stock" inputId="minmax"
+                                :min="0" :invalid="isInputValid" />
+                        </div>
+
                     </div>
                     <div class="flex items-center">
                         <InputSwitch v-model="itemData.isBestSeller" />
@@ -60,7 +163,7 @@ import { ClosePopup, saveeditItem, itemData, loading } from "./scripts/modifyIte
                         <Button label="Primary" @click="saveeditItem" class="px-6 h-fit bg-primary hover:bg-accent ">
                             <p class="font-bold text-[20px]">Save</p>
                         </Button>
-                        <Button v-if="!itemData.isDisabled" @click="" label="Primary"
+                        <Button v-if="!itemData.isDisabled" @click="disableItem" label="Primary"
                             class="group flex flex-col bg-transparent">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 class="w-[24px] h-[24px] stroke-darkgrey group-hover:stroke-accent">

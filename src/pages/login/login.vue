@@ -1,58 +1,42 @@
 <script setup>
 import { ref } from 'vue'
+import axios from 'axios'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const email = ref('');
 const password = ref('');
-var loading = ref(false);
-const User = ref({
-    accountID: 0,
-    accountType: 0,
-    firstName: '',
-    lastName: '',
-    phone: '',
-    email: email.value,
-    password: password.value
 
-});
+var loading = ref(false);
 
 const authUser = async () => {
     try {
         loading.value = true
-        const response = await fetch(`https://universitycafeapi.vercel.app/api/accounts/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include',
-            body: JSON.stringify(
-                {
-                    email: email.value,
-                    password: password.value
-                }
-            )
+        const response = await axios.post(`http://127.0.0.1:8000/api/accounts/login`, {
+            email: email.value,
+            password: password.value
+        },{
+            withCredentials: true
         })
-        const data = await response.json()
+        const data = await response.data;
         if (data) {
-            User.value.accountID = data.AccountID
-            User.value.accountType = data.AccountTypeID
-            User.value.firstName = data.FirstName
-            User.value.lastName = data.LastName
-            User.value.phone = data.Phone
-            console.log(User)
-            console.log('Login successful')
-        } else {
-            console.log('Login failed')
+            router.push('/cashier')
+        }else{
+            console.log('error')
         }
     } catch (error) {
         console.error(error)
     } finally {
         loading.value = false
+        email.value = '';
+        password.value = '';
     }
 }
 </script>
 
 <template>
-    <div class=" font-sora p-5 gap-y-[20%] h-screen flex flex-col items-center select-none">
+    <div class="z-20 font-sora p-5 gap-y-[20%] h-screen flex flex-col items-center select-none">
         <div v-if="loading" class="fixed -top-[1px] w-full">
             <ProgressBar mode="indeterminate" style="height: 6px"></ProgressBar>
         </div>

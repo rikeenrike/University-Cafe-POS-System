@@ -1,7 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { fetchFoodsProducts, fetchDrinksProducts, fetchproducts } from './pages/cashier/scripts/fetchProducts.js'
-import { fetchOrders, fetchLastTransID } from './pages/kitchen/assets/fetchTransactions.js'
 import navigation from "./pages/navigation/navigation.vue";
 
 import { useRoute } from 'vue-router';
@@ -10,13 +9,11 @@ onMounted(() => {
   fetchFoodsProducts()
   fetchDrinksProducts()
   fetchproducts()
-  fetchLastTransID()
 })
 </script>
 
 <template>
-
-  <navigation v-if="route.path !== '/'" />
+  <navigation v-if="$route.name !== 'Login' && $route.name !== 'NotFound'"/>  
   <ConfirmDialog group="headless">
     <template #container="{ message, acceptCallback, rejectCallback }">
       <div class="flex flex-col items-center p-5 bg-white font-sora rounded-md">
@@ -37,6 +34,6 @@ onMounted(() => {
       </div>
     </template>
   </ConfirmDialog>
-  <Toast position="top-right" group="bc"></Toast>
+  <Toast position="top-right" group="bc" class="z-9999"></Toast>
   <router-view />
 </template>

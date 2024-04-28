@@ -1,10 +1,7 @@
 <script setup>
 import menuloading from "../loading-comps/menuloading.vue";
 import { drinksproducts, loading, fetchsuccess } from "../cashier/scripts/fetchProducts.js";
-import { addItem, addSubItem, editItem } from "./scripts/modifyItems.js";
-
-
-
+import { addItem, addSub, editItem } from "./scripts/modifyItems.js";
 </script>
 
 <template>
@@ -17,7 +14,7 @@ import { addItem, addSubItem, editItem } from "./scripts/modifyItems.js";
       </div>
       <div v-if="fetchsuccess">
         <!-- add subcategory button -->
-        <div @click="addSubItem"
+        <div @click="addSub(1)"
           class="h-[100px] border-[3px] mb-1 pl-5 border-offwhite hover:border-primary duration-200 rounded-md flex items-center cursor-pointer">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
             class="w-6 h-6 mr-2 text-lightgrey">
@@ -45,21 +42,29 @@ import { addItem, addSubItem, editItem } from "./scripts/modifyItems.js";
               <!-- item -->
               <div v-for="item in tab.items" :key="item.id" @click="editItem(item)"
                 class="flex items-center cursor-pointer">
-                <div class="flex h-full justify-between flex-col items-center relative ">
-                  <div class="relative group">
-                    <img src="\src\pages\cashier\assets\images.jpg" alt="coffee"
-                      class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover object-center group-hover:opacity-50">
-                    <div
-                      class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                      <span class="text-black text-lg">EDIT</span>
-                    </div>
-                  </div>
+                <div v-if="!item.isDisabled" class="flex h-full justify-between flex-col items-center relative ">
+                  <img src="\src\pages\cashier\assets\images.jpg" alt="coffee"
+                    class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover object-center">
+
                   <div
                     class="flex justify-center items-center leading-none py-2  w-[175px] text-clamp4 font-regular text-center text-black ">
                     {{ item.ProductName }}
                   </div>
                   <div class="text-[12px]  font-semibold text-lightgrey">₱{{ item.UnitPrice }}.00
                   </div>
+                </div>
+                <div v-else class="flex h-full justify-between flex-col items-center relative ">
+
+                  <img src="\src\pages\cashier\assets\images.jpg" alt="coffee"
+                    class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover object-center opacity-50">
+                  <div
+                    class="flex justify-center items-center leading-none py-2 w-[175px] text-clamp4 font-regular text-center text-black opacity-50">
+                    {{ item.ProductName }}
+                  </div>
+                  <div class="text-[12px]  font-semibold text-lightgrey opacity-50">₱{{ item.UnitPrice }}.00
+                  </div>
+                  <Badge value="Disabled" class="bg-accent"></Badge>
+
                 </div>
               </div>
             </div>
