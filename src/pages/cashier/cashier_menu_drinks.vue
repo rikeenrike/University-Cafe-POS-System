@@ -19,15 +19,17 @@ import { drinksproducts, loading, fetchsuccess } from "./scripts/fetchProducts.j
               <!-- item -->
               <div v-for="item in tab.items" :key="item.id" @click="addToCart(item)"
                 class="flex items-center cursor-pointer">
-                <div class="flex h-full justify-between flex-col items-center relative ">
-                  <img src="\src\pages\cashier\assets\images.jpg" alt="coffee"
-                    class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover object-center">
+                <div v-if="!item.isDisabled">
+                  <div class="flex h-full justify-between flex-col items-center relative ">
+                    <img src="\src\pages\cashier\assets\images.jpg" alt="coffee"
+                      class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover object-center">
 
-                  <div
-                    class="flex justify-center items-center leading-none py-2  w-[175px] text-clamp4 font-regular text-center text-black ">
-                    {{ item.ProductName }}
-                  </div>
-                  <div class="text-[12px]  font-semibold text-lightgrey">₱{{ item.UnitPrice }}.00
+                    <div
+                      class="flex justify-center items-center leading-none py-2  w-[175px] text-clamp4 font-regular text-center text-black ">
+                      {{ item.ProductName }}
+                    </div>
+                    <div class="text-[12px]  font-semibold text-lightgrey">₱{{ item.UnitPrice }}.00
+                    </div>
                   </div>
                 </div>
               </div>
