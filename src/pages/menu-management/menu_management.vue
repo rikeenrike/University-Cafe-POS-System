@@ -4,8 +4,8 @@ import { productdata } from "../cashier/scripts/fetchProducts.js";
 import popupedit from "../menu-management/popupedit.vue";
 import popupadd from "../menu-management/popupadd.vue";
 import popupaddsubcategory from "../menu-management/popupaddsubcategory.vue";
-import { gsap } from "gsap";
 import { loading } from "../cashier/scripts/fetchProducts.js";
+import { editItem } from "./scripts/modifyItems";
 const search = ref("");
 const filteredResults = ref([]);
 const filteredData = computed(() => {
@@ -24,25 +24,7 @@ const filterData = () => {
         item.ProductName.toLowerCase().includes(search.value.toLowerCase())
     );
 };
-const editItem = () => {
 
-    gsap.to(".edit", {
-        x: -10,
-        opacity: 1,
-        duration: .5,
-        ease: "power4.out",
-        stagger: 0.2,
-
-    });
-    gsap.to(".editwrapper", {
-        x: 0,
-        opacity: 1,
-        duration: .5,
-        ease: "power4.out",
-        display: "flex",
-        backdropFilter: "blur(5px)",
-    });
-};
 </script>
 
 
@@ -54,7 +36,7 @@ const editItem = () => {
     <popupedit class="fixed z-[999]" />
     <popupadd class="fixed z-[999]" />
     <popupaddsubcategory class="fixed z-[999]" />
-    
+
     <div class="px-5 relative md:px-[43px] font-sora select-none top-[80px] h-[calc(100vh-80px)]">
 
         <div class="flex flex-col overflow-hidden">
@@ -79,8 +61,9 @@ const editItem = () => {
                         <div v-if="filteredData.length === 0">
                             Item not found
                         </div>
-                        <div v-else v-for="item in filteredData" :key="item.ProductID" @click="editItem">
-                            <div class="flex h-full justify-between flex-col items-center relative ">
+                        <div v-else v-for="item in filteredData" :key="item.id" @click="editItem(item)">
+                            <div v-if="!item.isDisabled"
+                                class="flex h-full justify-between flex-col items-center relative ">
                                 <div class="relative group">
                                     <img src="\src\pages\cashier\assets\images.jpg" alt="coffee"
                                         class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover object-center group-hover:opacity-50">
@@ -95,6 +78,19 @@ const editItem = () => {
                                 </div>
                                 <div class="text-[12px]  font-semibold text-lightgrey">₱{{ item.UnitPrice }}.00
                                 </div>
+                            </div>
+                            <div v-else class="flex h-full justify-between flex-col items-center relative ">
+                                <img src="\src\pages\cashier\assets\images.jpg" alt="coffee"
+                                    class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover object-center opacity-50">
+                                <div
+                                    class="flex justify-center items-center leading-none py-2 w-[175px] text-clamp4 font-regular text-center text-black opacity-50">
+                                    {{ item.ProductName }}
+                                </div>
+                                <div class="text-[12px]  font-semibold text-lightgrey opacity-50">₱{{ item.UnitPrice
+                                    }}.00
+                                </div>
+                                <Badge value="Disabled" class="bg-accent"></Badge>
+
                             </div>
                         </div>
                     </div>

@@ -8,7 +8,8 @@ export const fetchsuccess = ref(true);
 export const fetchDrinksProducts = async () => {
     try {
         const response = await axios.get("http://127.0.0.1:8000/api/products/maincategories/1");
-        drinksproducts.value = response.data;
+        drinksproducts.value = response.data;   
+        console.log(drinksproducts.value);
         fetchsuccess.value = true;
     } catch (error) {
         console.error(error);
@@ -22,7 +23,6 @@ export const fetchFoodsProducts = async () => {
     try {
         const response = await axios.get("http://127.0.0.1:8000/api/products/maincategories/2");
         foodsproducts.value = response.data;
-        console.log(foodsproducts.value);
         fetchsuccess.value = true;
     } catch (error) {
         console.error(error);

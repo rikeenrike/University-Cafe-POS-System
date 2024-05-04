@@ -1,18 +1,18 @@
 <script setup>
 import basket from "./cashier_basket.vue";
 import { ref, computed, onMounted } from "vue";
-import { addToCart } from "./scripts/Transaction.js";
+import { addToCart } from "./scripts/Items.js";
 import { productdata } from "./scripts/fetchProducts.js";
-import { ongoingOrders, readyOrders , loading, fetchsuccess } from "../kitchen/assets/fetchTransactions";
+import { ongoingOrders, readyOrders , loading} from "../kitchen/assets/fetchTransactions";
 import statusloading from "../loading-comps/statusloading.vue";
-import axios from "axios";
+
 const search = ref("");
 const filteredResults = ref([]);
+
 const filteredData = computed(() => {
   if (!search.value) {
     return productdata.value;
   }
-
   return filteredResults.value;
 });
 const filterData = () => {
@@ -26,6 +26,9 @@ const filterData = () => {
 };
 
 
+onMounted(() => {
+
+});
 </script>
 
 <template>

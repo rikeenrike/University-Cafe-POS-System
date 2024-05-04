@@ -3,6 +3,8 @@ import { ref } from "vue";
 import { gsap } from "gsap";
 import axios from "axios";
 import { useRouter } from "vue-router";
+import { Orders } from "../cashier/scripts/Items.js";
+import Cookies from 'js-cookie'
 
 const router = useRouter();
 const sidebarmenu = ref(false);
@@ -14,7 +16,6 @@ const toggleBasket = () => {
         display: "block",
         ease: "power4.out",
     });
-    console.log("basket");
 };
 const menu = ref();
 
@@ -32,6 +33,7 @@ const items = ref([
                     withCredentials: true
                 });
                 if (response.status === 200) {
+                    Cookies.remove('access_token');
                     router.push('/')
                 }else{
                     console.log('error')
@@ -75,8 +77,8 @@ const items = ref([
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
                 </svg>
-                <div v-if="totalitems > 0">
-                    <Badge :value="totalitems" severity="success"
+                <div v-if="Orders.length">
+                    <Badge :value="'!'" severity="success"
                         class=" absolute top-1 right-0 transform translate-x-[50%] -translate-y-[50%]" />
                 </div>
             </div>

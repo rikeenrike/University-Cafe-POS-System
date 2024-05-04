@@ -1,10 +1,17 @@
 <script setup>
 import { ref, computed } from "vue";
 import { gsap } from "gsap";
-import { Orders } from "./scripts/Transaction.js";
+import { Orders } from "./scripts/Items.js";
 import { useToast } from "primevue/usetoast";
-
+import { onMounted } from "vue";
+import { fetchOrders, fetchLatestOrder, ongoingOrders, objectpasser } from "../kitchen/assets/fetchTransactions.js"
 import axios from "axios";
+
+
+
+onMounted(() => {
+    fetchOrders();
+});
 
 const toast = useToast();
 const isEditing = ref(false);
@@ -15,6 +22,7 @@ const orderType = ref(0);
 const paymentType = ref(0);
 const total = ref(0);
 const notes = ref("");
+
 
 const DateTime = () => {
     const now = new Date();
@@ -51,7 +59,6 @@ const finalOrders = computed(() => {
 });
 
 const handleTransaction = async () => {
-    console.log(newTransaction.value);
     try {
         await axios.post("http://127.0.0.1:8000/api/transactions", newTransaction.value, {
             withCredentials: true
@@ -143,7 +150,6 @@ const toggleBasket = () => {
         display: "none",
         ease: "power4.out",
     });
-    console.log("basket");
 };
 </script>
 

@@ -1,5 +1,5 @@
 <script setup>
-import { addToCart } from "./scripts/Transaction.js";
+import { addToCart } from "./scripts/Items.js";
 import menuloading from "../loading-comps/menuloading.vue";
 import { foodsproducts, loading, fetchsuccess } from "./scripts/fetchProducts.js";
 
@@ -16,7 +16,6 @@ import { foodsproducts, loading, fetchsuccess } from "./scripts/fetchProducts.js
       <div v-if="fetchsuccess">
         <Accordion :activeIndex="[0, 1]" :multiple="true">
           <AccordionTab v-for="tab in foodsproducts" :key="tab.id" :header="tab.header">
-            <AccordionTab v-if="tab.items.length">
               <div class="-space-x-5 flex overflow-x-auto sm:space-x-1">
                 <!-- item -->
                 <div v-for="item in tab.items" :key="item.id" @click="addToCart(item)"
@@ -37,7 +36,6 @@ import { foodsproducts, loading, fetchsuccess } from "./scripts/fetchProducts.js
                 </div>
               </div>
             </AccordionTab>
-          </AccordionTab>
         </Accordion>
       </div>
       <div v-else class="text-[30px] font-bold text-black text-center">

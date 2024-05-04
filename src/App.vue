@@ -1,11 +1,31 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { fetchFoodsProducts, fetchDrinksProducts, fetchproducts } from './pages/cashier/scripts/fetchProducts.js'
+import { fetchLatestOrder, ongoingOrders, objectpasser } from "/src/pages/kitchen/assets/fetchTransactions.js"
+
 import navigation from "./pages/navigation/navigation.vue";
 
 import { useRoute } from 'vue-router';
 const route = useRoute();
+let socket
 onMounted(() => {
+  socket = new WebSocket('ws://127.0.0.1:8000/ws');
+  socket.addEventListener('message', (event) => {
+    console.log('Message from server: ', event.data);
+    try {
+      if (event.data === 'New order received') {
+        fetchLatestOrder(ongoingOrders);
+      } else {
+        const data = JSON.parse(event.data);
+        objectpasser(data.TransID, data.StatusID);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  });
+
+
+
   fetchFoodsProducts()
   fetchDrinksProducts()
   fetchproducts()

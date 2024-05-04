@@ -2,6 +2,7 @@ import { ref } from 'vue';
 
 export const Orders = ref([]);
 
+
 export const addToCart = (item) => {
     const existingItem = Orders.value.find((i) => i.name === item.ProductName);
     if (!existingItem) {
@@ -13,6 +14,7 @@ export const addToCart = (item) => {
             Subtotal: item.UnitPrice,
         };
         Orders.value.push(newItem);
+        
     } else {
         existingItem.quantity += 1;
         existingItem.Subtotal = existingItem.price * existingItem.quantity;

@@ -88,7 +88,7 @@ export default {
           !props.text &&
           !props.outlined &&
           !props.plain,
-        "bg-surface-500 dark:bg-surface-400":
+        "bg-accent ":
           props.severity === "secondary" &&
           !props.text &&
           !props.outlined &&

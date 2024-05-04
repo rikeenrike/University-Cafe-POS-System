@@ -6,7 +6,7 @@ export const loading = ref(false);
 //Edit Item
 export const itemData = ref({})
 export const editItem = (item) => {
-    itemData.value = JSON.parse(JSON.stringify(item));
+    itemData = item;
     OpenPopup(".edit", ".editwrapper")
 };
 
@@ -16,6 +16,8 @@ export const newItem = ref({
     UnitPrice: "",
     Stock: 0,
     SubCateID: 0,
+    isBestSeller: 0,
+    isDisabled: 0,
 })
 export const addItem = (subid) => {
     newItem.value.SubCateID = subid.SubCateID;

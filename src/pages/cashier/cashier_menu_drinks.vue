@@ -1,5 +1,5 @@
 <script setup>
-import { addToCart } from "./scripts/Transaction.js";
+import { addToCart } from "./scripts/Items.js";
 import menuloading from "../loading-comps/menuloading.vue";
 import { drinksproducts, loading, fetchsuccess } from "./scripts/fetchProducts.js";
 </script>
