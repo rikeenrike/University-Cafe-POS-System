@@ -25,6 +25,7 @@ import ProgressBar from 'primevue/progressbar';
 import ConfirmationService from 'primevue/confirmationservice';
 import ConfirmDialog from 'primevue/confirmdialog';
 import InputSwitch from 'primevue/inputswitch';
+import Calendar from 'primevue/calendar';
 
 const app = createApp(App);
 app.use(PrimeVue, {
@@ -32,6 +33,7 @@ app.use(PrimeVue, {
   pt: Lara,
 });
 app.use(router);
+app.component("Calendar", Calendar);
 app.component("InputSwitch", InputSwitch);
 app.component("ConfirmDialog", ConfirmDialog);
 app.component("ProgressBar", ProgressBar);

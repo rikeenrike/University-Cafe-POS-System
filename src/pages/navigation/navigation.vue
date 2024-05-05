@@ -64,7 +64,7 @@ const items = ref([
                         <router-link to="/menu-management" active-class="text-black"
                             class="hover:text-black duration-100">Menu Management</router-link>
                         <router-link to="/reports" active-class="text-black"
-                            class="hover:text-black duration-100">Reports</router-link>
+                            class="hover:text-black duration-100">Sales</router-link>
                     </span>
                 </div>
             </div>
@@ -129,7 +129,7 @@ const items = ref([
                         </div>
                         <div> 
                             <router-link to="/reports" active-class="text-black"
-                                class="hover:text-black duration-100">Reports</router-link>
+                                class="hover:text-black duration-100">Sales</router-link>
                         </div>
                     </div>
                     <div>Logout</div>

@@ -23,9 +23,6 @@ onMounted(() => {
       console.error(error);
     }
   });
-
-
-
   fetchFoodsProducts()
   fetchDrinksProducts()
   fetchproducts()
