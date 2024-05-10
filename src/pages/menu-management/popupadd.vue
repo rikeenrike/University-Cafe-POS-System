@@ -8,6 +8,13 @@ import axios from "axios";
 const toast = useToast();
 const isInputValid = ref(false);
 
+let image = ref(null);
+
+const insertImage = (e) => {
+    image = e.target.files[0];
+    console.log(image)
+}
+
 const saveNewItem = async () => {
     if (newItem.value.ProductName === "" || newItem.value.UnitPrice === "" || newItem.value.Stock === "") {
         isInputValid.value = true;
@@ -21,6 +28,24 @@ const saveNewItem = async () => {
         const response = await axios.post("http://127.0.0.1:8000/api/products/add", newItem.value)
         if (response) {
             const data = await response.data;
+
+            console.log(data.ProductID);
+            // Upload image after product is created
+            if (image.value !== null) {
+                const formData = new FormData();
+                formData.append("ProductID", data.ProductID);
+                formData.append("image", image);
+
+                const imagee = await axios.put("http://127.0.0.1:8000/api/products/image/add", formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+
+                // Create a blob URL from the File object
+                data.image = imagee.data;
+                console.log(data);
+            }
 
             toast.add({ severity: 'success', summary: 'Item added!', detail: 'Item has been successfully added', group: 'bc', life: 2000 });
 
@@ -51,28 +76,6 @@ const saveNewItem = async () => {
         loading.value = false
     }
     ClosePopup(".add", ".addwrapper")
-}
-
-const imageFile = ref(null);
-
-const handleFileUpload = (e) => {
-    imageFile.value = e.target.files[0];
-    console.log(imageFile.value);
-}
-
-const uploadImage = async () => {
-    const formData = new FormData();
-    formData.append("image", imageFile.value);
-    try {
-        const response = await axios.post("", formData, {
-            headers: {
-                "Content-Type": "multipart/form-data"
-            }
-        });
-        console.log(response);  
-    } catch (error) {
-        console.error(error);
-    }
 }
 
 </script>
@@ -108,11 +111,12 @@ const uploadImage = async () => {
                                     d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
                             </svg>
                             <!-- <p class="text-black text-[14px]">Add Image</p> -->
-                            <input type="file" ref="imageFile" @change="handleFileUpload" />
-                            <button v-on:click="submitFile">Upload</button>
+                            <input type="file" ref="imageFile" class="text-[16px] font-sora" @change="insertImage"
+                                accept="image/*" />
                         </div>
                     </div>
                     <div class="py-5">
+
                         <label class="text-[14px] font-semibold">Product name</label>
                         <InputText size="large" v-model="newItem.ProductName" placeholder="Product Name"
                             :invalid="isInputValid" />

@@ -5,10 +5,20 @@ import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 import axios from "axios";
 
+
 const confirm = useConfirm();
 const toast = useToast();
 
 const isInputValid = ref(false);
+
+let image = ref(null);
+
+const insertImage = (e) => {
+    image = e.target.files[0];
+    console.log(image)
+}
+
+
 const saveeditItem = async () => {
     if (itemData.value.ProductName === "" || itemData.value.UnitPrice === "" || itemData.value.Stock === "") {
         isInputValid.value = true;
@@ -18,19 +28,36 @@ const saveeditItem = async () => {
         isInputValid.value = false;
     }
     loading.value = true
+
+
+
+
     try {
+
         const response = await axios.put("http://127.0.0.1:8000/api/products/update", itemData.value);
+            
         if (response) {
             const data = await response.data;
             console.log(data);
             toast.add({ severity: 'success', summary: 'Item Saved!', detail: 'Item has been successfully edited', group: 'bc', life: 2000 });
 
-            
-
-
         } else {
-            throw new Error('Request failed');
+            toast.add({ severity: "error", summary: "Error", detail: "Changes were not made", group: 'bc', life: 2000 });
         }
+        
+
+        if (image.value !== null) {
+            const formData = new FormData();
+            formData.append('ProductID', itemData.value.ProductID);
+            formData.append('image', image);
+            console.log(formData);
+            await axios.put('http://127.0.0.1:8000/api/products/image/add', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+        }
+
     } catch (error) {
         console.error(error);
         toast.add({ severity: "error", summary: "Error", detail: "Changes were not made", group: 'bc', life: 2000 });
@@ -47,9 +74,9 @@ const disableItem = () => {
         header: 'Are you sure?',
         message: 'This will disable the product and will not be displayed on the menu. Please confirm to proceed.',
         accept: async () => {
-            loading.value = true;   
+            loading.value = true;
             try {
-            const response = await axios.put(`http://127.0.0.1:8000/api/products/disable/${itemData.value.ProductID}`);                
+                const response = await axios.put(`http://127.0.0.1:8000/api/products/disable/${itemData.value.ProductID}`);
                 if (response) {
                     const data = await response.data;
                     console.log(data);
@@ -60,7 +87,7 @@ const disableItem = () => {
             } catch (error) {
                 console.error(error);
                 toast.add({ severity: "error", summary: "Error", detail: "Changes were not made", group: 'bc', life: 2000 });
-            }finally {
+            } finally {
                 loading.value = false;
             }
             ClosePopup(".edit", ".editwrapper")
@@ -128,15 +155,19 @@ const reenableItem = () => {
                 <!-- MIDDLE ------------------------------------------------>
                 <div class="px-[40px] py-5 font-bold text-[20px] border-b-2  h-3/5 overflow-hidden">
                     <div class="flex space-x-3">
-                        <img src="\src\pages\cashier\assets\images.jpg" alt="coffee"
-                            class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover object-center group-hover:opacity-50">
+                        <img v-if="!itemData.image" src="\src\pages\cashier\assets\images.jpg" alt="coffee"
+                            class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover object-center">
+                        <img v-else :src="'data:image/png;base64,' + itemData.image" alt="test"
+                            class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover object-center">
                         <div class="flex items-center space-x-1" @click="insertImage">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" class="w-[20px] h-[20px]">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
                             </svg>
-                            <p class="text-black text-[14px] cursor-pointer">Edit Image</p>
+                            <input type="file" ref="imageFile" class="text-[16px] font-sora" @change="insertImage"
+                                accept="image/*" />
+
                         </div>
                     </div>
                     <div class="py-5">

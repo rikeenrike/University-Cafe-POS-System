@@ -23,7 +23,9 @@ import { drinksproducts, loading, fetchsuccess } from "./scripts/fetchProducts.j
                   class="flex items-center cursor-pointer">
                   <div v-if="!item.isDisabled">
                     <div class="flex h-full justify-between flex-col items-center relative ">
-                      <img src="\src\pages\cashier\assets\images.jpg" alt="coffee"
+                      <img v-if="!item.image" src="\src\pages\cashier\assets\images.jpg" alt="coffee"
+                        class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover object-center">
+                      <img v-else :src="'data:image/png;base64,' + item.image" alt="test"
                         class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover object-center">
 
                       <div

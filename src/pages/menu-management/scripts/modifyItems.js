@@ -18,6 +18,7 @@ export const newItem = ref({
     SubCateID: 0,
     isBestSeller: 0,
     isDisabled: 0,
+    image : null,
 })
 
 export const addItem = (subid) => {

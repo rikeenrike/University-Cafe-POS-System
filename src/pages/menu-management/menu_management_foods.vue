@@ -56,9 +56,10 @@ import { editItem, addSub, addItem, editSub, } from "./scripts/modifyItems.js";
               <div v-for="item in tab.items" :key="item.id" @click='editItem(item)'
                 class="flex items-center cursor-pointer">
                 <div v-if="!item.isDisabled" class="flex h-full justify-between flex-col items-center relative ">
-                  <img src="\src\pages\cashier\assets\images.jpg" alt="coffee"
+                  <img v-if="!item.image" src="\src\pages\cashier\assets\images.jpg" alt="coffee"
                     class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover object-center">
-
+                  <img v-else :src="'data:image/png;base64,' + item.image" alt="test"
+                    class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover object-center">
                   <div
                     class="flex justify-center items-center leading-none py-2  w-[175px] text-clamp4 font-regular text-center text-black ">
                     {{ item.ProductName }}
@@ -67,11 +68,15 @@ import { editItem, addSub, addItem, editSub, } from "./scripts/modifyItems.js";
                   </div>
                 </div>
                 <div v-else class="flex h-full justify-between flex-col items-center relative ">
-
-                  <img src="\src\pages\cashier\assets\images.jpg" alt="coffee"
-                    class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover object-center opacity-50">
-                  <div
-                    class="flex justify-center items-center leading-none py-2 w-[175px] text-clamp4 font-regular text-center text-black opacity-50">
+                  <img v-if="!item.image" src="\src\pages\cashier\assets\images.jpg" alt="coffee"
+                    class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover object-center">
+                  <img v-else-if="item.image.startsWith('data:image/png;base64,')" :src="item.image" alt="test"
+                    class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover object-center">
+                  <img v-else :src="item.image" alt="test"
+                    class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover object-center">
+                  <div>
+                    class="flex justify-center items-center leading-none py-2 w-[175px] text-clamp4 font-regular
+                    text-center text-black opacity-50">
                     {{ item.ProductName }}
                   </div>
                   <div class="text-[12px]  font-semibold text-lightgrey opacity-50">₱{{ item.UnitPrice }}.00
