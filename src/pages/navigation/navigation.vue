@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { gsap } from "gsap";
 import axios from "axios";
 import { useRouter } from "vue-router";
@@ -17,33 +17,79 @@ const toggleBasket = () => {
         ease: "power4.out",
     });
 };
-const menu = ref();
 
-const toggle = (event) => {
-    menu.value.toggle(event);
-    console.log("toggle");
-};
-const items = ref([
+const menu1 = ref();
+const menu2 = ref();
+
+const menu1Items  = ref([
     {
         label: "Logout",
         command: async () => {
             console.log("logout");
-            try{
-                const response = await axios.post(`http://127.0.0.1:8000/api/accounts/logout`,{
+            try {
+                const response = await axios.post(`http://127.0.0.1:8000/api/accounts/logout`, {
                     withCredentials: true
                 });
                 if (response.status === 200) {
                     Cookies.remove('access_token');
                     router.push('/')
-                }else{
+                } else {
                     console.log('error')
                 }
-            }catch (error) {
+            } catch (error) {
                 console.error(error)
             }
         },
     },
 ]);
+
+
+const menu2Items  = ref([
+    {
+        label: "Sales",
+        command: () => {
+            router.push("/reports");
+        },
+    },
+    {
+        label: "Tally",
+        command: () => {
+            router.push("/reports/tally");
+        },
+    }
+]);
+
+
+const showMenu1 = (event) => {
+    // Access menu1 instance using ref
+    menu1.value.toggle(event);
+};
+
+const showMenu2 = (event) => {
+    // Access menu2 instance using ref
+    menu2.value.toggle(event);
+};
+
+const name = ref('')
+
+const accessname = async () => {
+    try {
+        const response = await axios.get('http://127.0.0.1:8000/api/users/me', {
+            withCredentials: true,
+        });
+        const data = await response.data;
+        if (data) {
+            console.log(data);
+            name.value = data.Name;
+        }
+    } catch (error) {
+        console.error('Failed to access name:', error);
+    }
+}
+
+onMounted(() => {
+    accessname();
+});
 </script>
 
 <template>
@@ -63,8 +109,9 @@ const items = ref([
                             class="hover:text-black duration-100">Kitchen</router-link>
                         <router-link to="/menu-management" active-class="text-black"
                             class="hover:text-black duration-100">Menu Management</router-link>
-                        <router-link to="/reports" active-class="text-black"
-                            class="hover:text-black duration-100">Sales</router-link>
+                        <p class="hover:text-black duration-100" @click="showMenu2">Sales
+                            <Menu ref="menu2" :model="menu2Items " :popup="true" />
+                        </p>
                     </span>
                 </div>
             </div>
@@ -84,7 +131,7 @@ const items = ref([
             </div>
 
             <!-- account  -->
-            <div class="hidden md:flex items-center space-x-2" @click="toggle">
+            <div class="hidden md:flex items-center space-x-2" @click="showMenu1">
                 <div>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="w-[20px] h-[20px]">
@@ -99,7 +146,15 @@ const items = ref([
                         <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                     </svg>
                 </div>
-                <Menu ref="menu" id="overlay_menu" :model="items" :popup="true" />
+                <Menu ref="menu1" id="overlay_menu" :model="menu1Items " :popup="true">
+                    <template #start>
+                        <span class="inline-flex font-sora items-center gap-1 px-2 py-2 w-full">
+                            <span class="font-medium text-lg    ">Welcome,
+                                <span class="text-primary">{{ name }}</span>
+                        </span>
+                        </span>
+                    </template>
+                </Menu>
             </div>
 
 
@@ -127,7 +182,7 @@ const items = ref([
                             <router-link to="/menu-management" active-class="text-black"
                                 class="hover:text-black duration-100">Menu Management</router-link>
                         </div>
-                        <div> 
+                        <div>
                             <router-link to="/reports" active-class="text-black"
                                 class="hover:text-black duration-100">Sales</router-link>
                         </div>

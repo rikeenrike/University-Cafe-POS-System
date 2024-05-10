@@ -53,6 +53,28 @@ const saveNewItem = async () => {
     ClosePopup(".add", ".addwrapper")
 }
 
+const imageFile = ref(null);
+
+const handleFileUpload = (e) => {
+    imageFile.value = e.target.files[0];
+    console.log(imageFile.value);
+}
+
+const uploadImage = async () => {
+    const formData = new FormData();
+    formData.append("image", imageFile.value);
+    try {
+        const response = await axios.post("", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        });
+        console.log(response);  
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 </script>
 
 <template>
@@ -85,7 +107,9 @@ const saveNewItem = async () => {
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
                             </svg>
-                            <p class="text-black text-[14px]">Add Image</p>
+                            <!-- <p class="text-black text-[14px]">Add Image</p> -->
+                            <input type="file" ref="imageFile" @change="handleFileUpload" />
+                            <button v-on:click="submitFile">Upload</button>
                         </div>
                     </div>
                     <div class="py-5">

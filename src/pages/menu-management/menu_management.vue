@@ -4,6 +4,7 @@ import { productdata } from "../cashier/scripts/fetchProducts.js";
 import popupedit from "../menu-management/popupedit.vue";
 import popupadd from "../menu-management/popupadd.vue";
 import popupaddsubcategory from "../menu-management/popupaddsubcategory.vue";
+import popupeditsubcategory from "../menu-management/popupeditsubcategory.vue";
 import { loading } from "../cashier/scripts/fetchProducts.js";
 import { editItem } from "./scripts/modifyItems";
 const search = ref("");
@@ -33,9 +34,12 @@ const filterData = () => {
     <div v-if="loading" class="fixed z-20 -top-[1px] w-full">
         <ProgressBar mode="indeterminate" style="height: 6px"></ProgressBar>
     </div>
+    
+    <popupeditsubcategory class="fixed z-[999]" />
     <popupedit class="fixed z-[999]" />
     <popupadd class="fixed z-[999]" />
     <popupaddsubcategory class="fixed z-[999]" />
+
 
     <div class="px-5 relative md:px-[43px] font-sora select-none top-[80px] h-[calc(100vh-80px)]">
 

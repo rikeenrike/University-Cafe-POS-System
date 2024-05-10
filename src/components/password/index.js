@@ -89,7 +89,7 @@ export default {
                 'text-black',
                 'placeholder:text-lightgrey dark:placeholder:text-lightgrey',
                 'bg-offwhite',
-
+                { 'border border-red-500': parent.props.invalid },
                 // Invalid State
                 { 'border-red-500 dark:border-red-400': parent.props.invalid },
 

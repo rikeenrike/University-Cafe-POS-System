@@ -9,14 +9,14 @@ const toast = useToast();
 
 
 
-const cancelOrder = (TransID) => {
+const cancelOrder = (TransID, items) => {
     confirm.require({
         group: 'headless',
         header: 'Are you sure?',
         message: 'This will cancel the order. Please confirm to proceed.',
         accept: () => {
             toast.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
-            updateOrderStatus(TransID, 5);
+            updateOrderStatus(TransID, 5, items);
         },
         reject: () => {
             toast.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
@@ -146,7 +146,7 @@ onMounted(() => {
                         </div>
                         <!-- buttons -->
                         <div class="flex justify-between items-center">
-                            <Button @click="cancelOrder(ong.TransID)" label="Primary"
+                            <Button @click="cancelOrder(ong.TransID, ong.items)" label="Primary"
                                 class="group flex flex-col bg-transparent">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                     stroke-width="1.5"

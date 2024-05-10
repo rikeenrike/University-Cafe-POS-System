@@ -10,6 +10,8 @@ export default {
           "select-none pointer-events-none cursor-default opacity-60":
             props?.disabled,
         },
+        // severity
+
       ],
     }),
     headerAction: ({ context }) => ({
@@ -19,7 +21,7 @@ export default {
         "leading-none",
 
         // Alignments
-        "flex items-center",
+        "flex items-center w-full",
         "relative",
 
         // Sizing

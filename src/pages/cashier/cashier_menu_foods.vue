@@ -14,8 +14,10 @@ import { foodsproducts, loading, fetchsuccess } from "./scripts/fetchProducts.js
         <menuloading />
       </div>
       <div v-if="fetchsuccess">
-        <Accordion :activeIndex="[0, 1]" :multiple="true">
-          <AccordionTab v-for="tab in foodsproducts" :key="tab.id" :header="tab.header">
+        <div v-for="tab in foodsproducts" :key="tab.id">
+          <Accordion :activeIndex="[0, 1]" :multiple="true">
+            <AccordionTab v-if="!tab.isDisabled && tab.items.every(item => !item.isDisabled) && tab.items.length"
+              :header="tab.header">
               <div class="-space-x-5 flex overflow-x-auto sm:space-x-1">
                 <!-- item -->
                 <div v-for="item in tab.items" :key="item.id" @click="addToCart(item)"
@@ -36,7 +38,9 @@ import { foodsproducts, loading, fetchsuccess } from "./scripts/fetchProducts.js
                 </div>
               </div>
             </AccordionTab>
-        </Accordion>
+          </Accordion>
+        </div>
+
       </div>
       <div v-else class="text-[30px] font-bold text-black text-center">
         <h1>No items found</h1>

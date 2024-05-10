@@ -9,8 +9,8 @@ export const fetchDrinksProducts = async () => {
     try {
         const response = await axios.get("http://127.0.0.1:8000/api/products/maincategories/1");
         drinksproducts.value = response.data;   
-        console.log(drinksproducts.value);
         fetchsuccess.value = true;
+        console.log(drinksproducts.value)
     } catch (error) {
         console.error(error);
         fetchsuccess.value = false;

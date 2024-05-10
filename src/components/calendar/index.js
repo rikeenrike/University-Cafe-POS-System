@@ -7,27 +7,29 @@ export default {
             'relative',
 
             // Misc
-            { 'opacity-60 select-none pointer-events-none cursor-default': props.disabled }
+            { 'opacity-60 select-none pointer-events-none cursor-no-drop': props.disabled }
         ]
     }),
     input: ({ props }) => ({
         class: [
             // Display
-            'flex flex-auto',
+            'flex flex-auto w-[140px] h-fit justify-center',
 
             // Font
             'font-sora',
 
             // Colors
-            'text-surface-600 dark:text-surface-200',
+            'text-black',
             'placeholder:text-surface-400',
-            'bg-surface-0 dark:bg-surface-900',
+            'bg-offwhite',
             'border',
-            { 'border-surface-300 dark:border-surface-600': !props.invalid },
+            { '': !props.invalid },
 
             // Invalid State
             { 'border-red-500 dark:border-red-400': props.invalid },
 
+            // if disabled
+            { 'bg-secondary': props.disabled },
             // Spacing
             'm-0 p-3',
 
@@ -43,7 +45,7 @@ export default {
 
             // States
             { 'hover:border-primary-500 dark:hover:border-primary-400': !props.invalid },
-            'focus:outline-none focus:outline-offset-0 focus:ring focus:ring-primary-500/50 dark:focus:ring-primary-400/50'
+            'focus:outline-none focus:outline-offset-0 focus:ring focus:ring-white'
         ]
     }),
     inputicon: {
@@ -378,7 +380,7 @@ export default {
 
             // Colors
             {
-                'text-surface-600 dark:text-white/70 bg-transparent': !context.selected && !context.disabled,
+                'text-black': !context.selected && !context.disabled,
                 'text-primary-700 bg-primary-100 dark:text-surface-0 dark:bg-primary-300/40': context.selected && !context.disabled
             },
 

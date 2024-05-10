@@ -25,9 +25,11 @@ export default {
         clamp3: "clamp(18px, 4vw ,24px)",
         clamp4: "clamp(16px, 3vw ,20px)",
         clamp5: "clamp(10px, 7vw ,16px)",
+        clamp5: "clamp(16px, 5vw ,48px)",
       },
       width: {
         clamp1: "clamp(250px, 90vw, 450px)",
+        clamp2: "clamp(16px, 5vw ,48px)",
       }
 
     },

@@ -68,10 +68,29 @@ const routes = [
   {
     path: "/reports",
     name: "Reports",
-    component: () => import("/src/pages/reports/reports.vue"),
+    components: {
+      default: () => import("/src/pages/reports/reports.vue"),
+      sales: () => import("/src/pages/reports/reports_sales.vue"),
+      tally: () => import("/src/pages/reports/reports_tally.vue"),
+    },
     meta: {
       requiresAuth: true,
     },
+    redirect: "/reports/sales",
+    children: [
+      {
+        path: "sales",
+        components: {
+          sales: () => import("/src/pages/reports/reports_sales.vue"),
+        },
+      },
+      {
+        path: "tally",
+        components: {
+        tally: () => import("/src/pages/reports/reports_tally.vue"),
+        },
+      },
+    ],
   },
   {
     path: '/:pathMatch(.*)*',

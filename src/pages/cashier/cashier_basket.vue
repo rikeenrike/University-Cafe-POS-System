@@ -1,12 +1,13 @@
 <script setup>
 import { ref, computed } from "vue";
 import { gsap } from "gsap";
-import { Orders } from "./scripts/Items.js";
+import { Orders, addToCart } from "./scripts/Items.js";
 import { useToast } from "primevue/usetoast";
 import { onMounted } from "vue";
 import { fetchOrders, fetchLatestOrder, ongoingOrders, objectpasser } from "../kitchen/assets/fetchTransactions.js"
 import axios from "axios";
-
+import { drinksproducts, foodsproducts } from "./scripts/fetchProducts";
+ 
 
 
 onMounted(() => {
@@ -64,13 +65,43 @@ const handleTransaction = async () => {
             withCredentials: true
         });
         toast.add({ severity: 'success', summary: 'Order Placed', detail: 'Order has been placed', group: 'bc', life: 2000 });
+        minusStocks();
     } catch (error) {
         console.log(error);
     } finally {
         clearAll();
     }
+
 };
 
+
+const minusStocks = () => {
+        Orders.value.forEach((order) => {
+            let productFound = false;
+    
+            drinksproducts.value.forEach((subcategory) => {
+                subcategory.items.forEach((product) => {
+                    if (order.ProductID === product.ProductID) {
+                        product.Stock -= order.quantity;
+                        productFound = true;
+                    }
+                });
+            });
+
+            if (!productFound) {
+                foodsproducts.value.forEach((subcategory) => {
+                    subcategory.items.forEach((product) => {
+                        if (order.ProductID === product.ProductID) {
+                            product.Stock -= order.quantity;
+                        }
+                    });
+                });
+            }
+        });
+    
+        console.log(drinksproducts.value);
+        console.log(foodsproducts.value);
+    };
 const checkFields = () => {
     if (orderType.value === 0) {
         toast.add({ severity: 'error', summary: 'Order Type', detail: 'Please select Order Type', group: 'bc', life: 5000 });
@@ -79,6 +110,12 @@ const checkFields = () => {
     }
     if (paymentType.value === 0) {
         toast.add({ severity: 'error', summary: 'Payment Method', detail: 'Please select Payment Method', group: 'bc', life: 5000 });
+        errorhighlight.value = true;
+        return;
+    }
+
+    if (customerName.value === "Customer Name") {
+        toast.add({ severity: 'error', summary: 'Customer Name', detail: 'Please input Customer Name', group: 'bc', life: 5000 });
         errorhighlight.value = true;
         return;
     }
@@ -108,7 +145,12 @@ const increaseQuantity = (item) => {
     if (item.quantity === null) {
         return;
     }
+    if (item.Stock === 0) {
+        toast.add({ severity: 'error', summary: 'Out of Stock', detail: 'Item is out of stock', group: 'bc', life: 2000 });
+        return;
+    }
     item.quantity++
+    item.Stock--
     calculateSubTotal();
 };
 const decrementQuantity = (item) => {
@@ -120,6 +162,8 @@ const decrementQuantity = (item) => {
         const index = Orders.value.indexOf(item);
         Orders.value.splice(index, 1);
     }
+    item.Stock++
+    console.log(item.Stock);
     calculateSubTotal();
 };
 const calculateSubTotal = () => {
@@ -164,8 +208,13 @@ const toggleBasket = () => {
                         <input v-show="isEditing" v-model="customerName" class="border-2 w-3/5"
                             @blur="isEditing = false" />
                         <span v-show="!isEditing">{{ customerName }}</span>
-                        <img src="./assets/icons/edit.svg" alt="" class="w-6 h-6 cursor-pointer"
-                            @click="isEditing = true">
+                        <svg @click="isEditing = true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 cursor-pointer" >
+                            <path
+                                d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32l8.4-8.4Z" />
+                            <path
+                                d="M5.25 5.25a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3V13.5a.75.75 0 0 0-1.5 0v5.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5V8.25a1.5 1.5 0 0 1 1.5-1.5h5.25a.75.75 0 0 0 0-1.5H5.25Z" />
+                        </svg>
+
                     </h1>
                 </span>
                 <!-- clear button -->
@@ -192,10 +241,10 @@ const toggleBasket = () => {
                 <div v-if="Orders.length && Orders" class="pt-2 flex flex-col h-[190px] space-y-2 overflow-y-auto">
                     <li v-for="(item, index) in Orders" :key="index" class="grid grid-cols-3 text-[16px] font-normal">
                         <!-- item -->
-                        <p class="text-left">{{ item.name }}</p>
+                        <p class="text-left">{{ item.ProductName }}</p>
                         <!-- quantity -->
                         <div class="flex justify-between items-center mx-6">
-                            <svg @click="increaseQuantity(item)" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            <svg @click="addToCart(item)" xmlns="http://www.w3.org/2000/svg" fill="none"
                                 viewBox="0 0 24 24" stroke-width="1.5"
                                 class="w-6 h-6 cursor-pointer stroke-lightgrey active:stroke-black">
                                 <path stroke-linecap="round" stroke-linejoin="round"

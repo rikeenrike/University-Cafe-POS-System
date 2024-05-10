@@ -6,19 +6,20 @@ export const loading = ref(false);
 //Edit Item
 export const itemData = ref({})
 export const editItem = (item) => {
-    itemData = item;
+    itemData.value = item;
     OpenPopup(".edit", ".editwrapper")
 };
 
 //Add Item
 export const newItem = ref({
     ProductName: "",
-    UnitPrice: "",
+    UnitPrice: 0,
     Stock: 0,
     SubCateID: 0,
     isBestSeller: 0,
     isDisabled: 0,
 })
+
 export const addItem = (subid) => {
     newItem.value.SubCateID = subid.SubCateID;
     OpenPopup(".add", ".addwrapper");
@@ -33,6 +34,13 @@ export const addSub = (mainid) => {
     newSubCategory.value.MainCateID = mainid;
     OpenPopup(".addsub", ".addsubwrapper");
 };  
+
+export const subData = ref({})
+export const editSub = (sub) => {  
+    OpenPopup(".editsub", ".editsubwrapper");
+    subData.value = sub;
+    console.log(subData.value);
+}
 
 //Animations
 export const ClosePopup = ( target1, target2 ) => {

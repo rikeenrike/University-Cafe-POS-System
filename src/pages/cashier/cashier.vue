@@ -106,7 +106,7 @@ onMounted(() => {
               Item not found
             </div>
             <div v-else v-for="item in filteredData" :key="item.ProductID" @click="addToCart(item)">
-              <div class="flex h-full justify-between flex-col items-center relative ">
+              <div v-if="!item.isDisabled" class="flex h-full justify-between flex-col items-center relative ">
                 <img src="\src\pages\cashier\assets\images.jpg" alt="coffee"
                   class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover object-center">
 
