@@ -4,7 +4,7 @@ import { gsap } from "gsap";
 import { Orders, addToCart } from "./scripts/Items.js";
 import { useToast } from "primevue/usetoast";
 import { onMounted } from "vue";
-import { fetchOrders, fetchLatestOrder, ongoingOrders, objectpasser } from "../kitchen/assets/fetchTransactions.js"
+import { fetchOrders } from "../kitchen/assets/fetchTransactions.js"
 import axios from "axios";
 import { drinksproducts, foodsproducts } from "./scripts/fetchProducts";
  
@@ -23,7 +23,7 @@ const orderType = ref(0);
 const paymentType = ref(0);
 const total = ref(0);
 const notes = ref("");
-
+// const ReferenceNumber = ref("");
 
 const DateTime = () => {
     const now = new Date();
@@ -49,7 +49,11 @@ const newTransaction = computed(() => ({
         StatusID: 1,
         Time: dateTime.Time,
         Total: total.value,
+        ReferenceNumber: "",
 }));
+// ReferenceNumber: ReferenceNumber.value,
+
+
 
 const finalOrders = computed(() => {
     return Orders.value.map((item) => ({
@@ -74,7 +78,6 @@ const handleTransaction = async () => {
 
 };
 
-
 const minusStocks = () => {
         Orders.value.forEach((order) => {
             let productFound = false;
@@ -98,9 +101,7 @@ const minusStocks = () => {
                 });
             }
         });
-    
-        console.log(drinksproducts.value);
-        console.log(foodsproducts.value);
+
     };
 const checkFields = () => {
     if (orderType.value === 0) {
@@ -114,7 +115,7 @@ const checkFields = () => {
         return;
     }
 
-    if (customerName.value === "Customer Name") {
+    if (customerName.value === "Customer Name" || customerName.value === "") {
         toast.add({ severity: 'error', summary: 'Customer Name', detail: 'Please input Customer Name', group: 'bc', life: 5000 });
         errorhighlight.value = true;
         return;
@@ -131,7 +132,6 @@ const setOrderType = (type) => {
         return;
     }
     orderType.value = type;
-    console.log(orderType.value);
 };
 const setPaymentType = (type) => {
     if (type === paymentType.value) {
@@ -139,7 +139,6 @@ const setPaymentType = (type) => {
         return;
     }
     paymentType.value = type;
-    console.log(paymentType.value);
 };
 const increaseQuantity = (item) => {
     if (item.quantity === null) {
@@ -163,7 +162,6 @@ const decrementQuantity = (item) => {
         Orders.value.splice(index, 1);
     }
     item.Stock++
-    console.log(item.Stock);
     calculateSubTotal();
 };
 const calculateSubTotal = () => {
@@ -202,13 +200,14 @@ const toggleBasket = () => {
         <div class="border-2 flex flex-col w-full bg-white rounded-[10px] overflow-hidden">
             <!-- TOP ------------------------------------------------>
             <div class="flex items-center justify-between border-b-2 px-5 py-5">
-                <!-- customer and orderid -->
+                <!-- customer -->
                 <span>
                     <h1 class="font-bold text-[24px] flex items-center gap-2">
                         <input v-show="isEditing" v-model="customerName" class="border-2 w-3/5"
                             @blur="isEditing = false" />
                         <span v-show="!isEditing">{{ customerName }}</span>
-                        <svg @click="isEditing = true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 cursor-pointer" >
+                        <svg @click="isEditing = true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                            fill="currentColor" class="w-6 h-6 cursor-pointer">
                             <path
                                 d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32l8.4-8.4Z" />
                             <path
@@ -349,6 +348,10 @@ const toggleBasket = () => {
                     <p>Notes</p>
                     <InputText type="text" v-model="notes" placeholder="e.g. 'extra shot of expresso' " />
                 </div>
+                <!-- <div>
+                    <p>GCASH Reference #</p>
+                    <InputText type="text" v-model="ReferenceNumber" placeholder="e.g. '1234-5678-9012' " />
+                </div> -->
                 <Button @click="checkFields()" label="Primary"
                     class="w-full h-fit bg-primary hover:bg-accent font-bold text-[20px]">
                     Place Order
@@ -408,7 +411,7 @@ const toggleBasket = () => {
                 <div v-if="Orders.length && Orders" class="pt-2 flex flex-col h-[190px] space-y-2 overflow-y-auto">
                     <li v-for="(item, index) in Orders" :key="index" class="grid grid-cols-3 text-[16px] font-normal">
                         <!-- item -->
-                        <p class="text-left">{{ item.name }}</p>
+                        <p class="text-left">{{ item.ProductName }}</p>
                         <!-- quantity -->
                         <div class="flex justify-between items-center mx-6">
                             <svg @click="increaseQuantity(item)" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -515,6 +518,10 @@ const toggleBasket = () => {
                     <p>Notes</p>
                     <InputText type="text" v-model="notes" placeholder="e.g. 'extra shot of expresso' " />
                 </div>
+                <!-- <div>
+                    <p>GCASH Reference #</p>
+                    <InputText type="text" v-model="ReferenceNumber" placeholder="e.g. '1234-5678-9012' " />
+                </div> -->
                 <Button @click="checkFields()" label="Primary"
                     class="w-full h-fit bg-primary hover:bg-accent font-bold text-[20px]">
                     Place Order

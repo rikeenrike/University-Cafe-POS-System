@@ -3,6 +3,7 @@ import axios from "axios";
 import { drinksproducts, foodsproducts } from "../../cashier/scripts/fetchProducts";
 export let ongoingOrders = ref([]);
 export let readyOrders = ref([]);
+export let cancelledOrders = ref([]);
 export const loading = ref(true);
 export const fetchsuccess = ref(false);
 
@@ -11,10 +12,12 @@ export const fetchOrders = async () => {
         const response = await axios.get(`http://127.0.0.1:8000/api/transactions/kitchen/statusgetter`);
         const data = response.data;
 
-        ongoingOrders.value = data.filter(order => order.Status === 1);
-        readyOrders.value = data.filter(order => order.Status === 2);
+        ongoingOrders.value = data.filter(order => order.Status === 1 || order.Status === 6);
         console.log(ongoingOrders.value);
+        readyOrders.value = data.filter(order => order.Status === 2);
         fetchsuccess.value = true;
+        const cancels  = data.filter(order => order.Status === 5);
+        cancelledOrders.value = cancels.slice().sort((a, b) => b.TransID - a.TransID);
     } catch (error) {
         console.error(error);
         fetchsuccess.value = false;
@@ -25,7 +28,6 @@ export const fetchOrders = async () => {
 
 export const updateOrderStatus = async (TransID, StatusID, items) => {
     try {
-        console.log(TransID, StatusID, items);
         const response = await axios.put(`http://127.0.0.1:8000/api/transactions/${TransID}/${StatusID}/statussetter`);
         if (StatusID === 5) {
                 items.forEach((order) => {
@@ -35,7 +37,6 @@ export const updateOrderStatus = async (TransID, StatusID, items) => {
                             if (order.ProductID === product.ProductID) {
                                 product.Stock += order.Qty;
                                 productFound = true;
-                                console.log(product.Stock);
                             }
                         });
                     });
@@ -44,14 +45,18 @@ export const updateOrderStatus = async (TransID, StatusID, items) => {
                         subcategory.items.forEach((product) => {
                             if (order.ProductID === product.ProductID) {
                                 product.Stock += order.Qty;
-                                console.log(product.Stock);
                             }
                         });
                     });
 
                 });
-            console.log(drinksproducts.value);
-            console.log(foodsproducts.value);
+        }
+        if (StatusID === 1) {
+            ongoingOrders.value.forEach((order) => {
+                if (order.TransID === TransID) {
+                    order.Status = 1;
+                }
+            });
         }
     } catch (error) {
         console.error(error);

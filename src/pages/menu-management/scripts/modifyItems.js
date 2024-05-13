@@ -40,7 +40,6 @@ export const subData = ref({})
 export const editSub = (sub) => {  
     OpenPopup(".editsub", ".editsubwrapper");
     subData.value = sub;
-    console.log(subData.value);
 }
 
 //Animations

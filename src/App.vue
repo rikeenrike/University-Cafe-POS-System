@@ -11,7 +11,6 @@ let socket
 onMounted(() => {
   socket = new WebSocket('ws://127.0.0.1:8000/ws');
   socket.addEventListener('message', (event) => {
-    console.log('Message from server: ', event.data);
     try {
       if (event.data === 'New order received') {
         fetchLatestOrder(ongoingOrders);
@@ -30,7 +29,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <navigation v-if="$route.name !== 'Login' && $route.name !== 'NotFound'"/>  
+  <navigation v-if="$route.name !== 'Login' && $route.name !== 'NotFound' && $route.name !== 'Register' && $route.name !== 'ForgotPassword'"/>  
   <ConfirmDialog group="headless">
     <template #container="{ message, acceptCallback, rejectCallback }">
       <div class="flex flex-col items-center p-5 bg-white font-sora rounded-md">

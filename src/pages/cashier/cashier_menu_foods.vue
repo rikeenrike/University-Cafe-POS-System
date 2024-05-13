@@ -16,7 +16,7 @@ import { foodsproducts, loading, fetchsuccess } from "./scripts/fetchProducts.js
       <div v-if="fetchsuccess">
         <div v-for="tab in foodsproducts" :key="tab.id">
           <Accordion :activeIndex="[0, 1]" :multiple="true">
-            <AccordionTab v-if="!tab.isDisabled && tab.items.every(item => !item.isDisabled) && tab.items.length"
+            <AccordionTab v-if="!tab.isDisabled && tab.items.some(item => !item.isDisabled) && tab.items.length"
               :header="tab.header">
               <div class="-space-x-5 flex overflow-x-auto sm:space-x-1">
                 <!-- item -->

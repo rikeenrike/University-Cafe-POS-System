@@ -18,7 +18,6 @@ export const addToCart = (item) => {
         }
         newItem.Stock -= 1;
         Orders.value.push(newItem);
-        console.log(Orders.value);
     } else {
         if (existingItem.Stock <= 0){
             return;
@@ -26,6 +25,5 @@ export const addToCart = (item) => {
         existingItem.Stock -= 1;
         existingItem.quantity += 1;
         existingItem.Subtotal = existingItem.price * existingItem.quantity;
-        console.log(Orders.value);
     }
 };

@@ -12,7 +12,6 @@ let image = ref(null);
 
 const insertImage = (e) => {
     image = e.target.files[0];
-    console.log(image)
 }
 
 const saveNewItem = async () => {
@@ -29,7 +28,6 @@ const saveNewItem = async () => {
         if (response) {
             const data = await response.data;
 
-            console.log(data.ProductID);
             // Upload image after product is created
             if (image.value !== null) {
                 const formData = new FormData();
@@ -44,7 +42,6 @@ const saveNewItem = async () => {
 
                 // Create a blob URL from the File object
                 data.image = imagee.data;
-                console.log(data);
             }
 
             toast.add({ severity: 'success', summary: 'Item added!', detail: 'Item has been successfully added', group: 'bc', life: 2000 });
@@ -63,7 +60,6 @@ const saveNewItem = async () => {
                 for (let i = 0; i < drinksproducts.value.length; i++) {
                     if (drinksproducts.value[i].SubCateID == newItem.value.SubCateID) {
                         drinksproducts.value[i].items.push(data);
-                        console.log(drinksproducts.value)
                         break;
                     }
                 }

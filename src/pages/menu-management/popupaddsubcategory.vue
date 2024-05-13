@@ -18,7 +18,6 @@ const addSubcategory = async () => {
         const response = await axios.post("http://127.0.0.1:8000/api/product_sub_category", newSubCategory.value)
         if(response){
             const data = await response.data;
-            console.log(data);
             toast.add({ severity: 'success', summary: 'Subcategory Added!', detail: 'Subcategory has been successfully added', group: 'bc', life: 2000 });
         }else {
             throw new Error('Request failed');

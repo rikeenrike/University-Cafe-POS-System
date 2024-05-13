@@ -41,7 +41,6 @@ const querySales = async () => {
         toast.add({ severity: "error", summary: "Error", detail: "From date cannot be equal to To date", group: 'bc', life: 2000 });
         return
     }
-    console.log(date1.value, date2.value)
 
     try {
         const response = await axios.get(`http://127.0.0.1:8000/api/reports/tally/${date1.value}/${date2.value}`);
@@ -71,7 +70,6 @@ const querySales = async () => {
     } finally {
         date1.value = "none"
         date2.value = "none"
-        console.log("done")
     }
 
 }

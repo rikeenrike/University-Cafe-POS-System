@@ -9,8 +9,8 @@ export default {
             'rounded-md',
 
             // Color and Background
-            'bg-surface-0 dark:bg-surface-900',
-            'border',
+            'bg-white dark:bg-surface-900',
+            'border text-black',
             { 'border-surface-300 dark:border-surface-600': !props.invalid },
 
             // Invalid State
@@ -41,7 +41,7 @@ export default {
             'p-3',
 
             // Color
-            'text-surface-800 dark:text-white/80',
+            'text-black',
 
             // Transition
             'transition duration-200',
@@ -58,7 +58,7 @@ export default {
 
             // Color and Background
             'bg-transparent',
-            'text-surface-500',
+            'text-black',
 
             // Size
             'w-12',
@@ -79,8 +79,8 @@ export default {
             'shadow-md',
 
             // Color
-            'bg-surface-0 dark:bg-surface-800',
-            'text-surface-800 dark:text-white/80',
+            'bg-white ',
+            'text-black',
             'dark:border-surface-700'
         ]
     },
@@ -127,7 +127,7 @@ export default {
                 'p-2',
 
                 // Colors
-                'text-surface-600 dark:text-white/70',
+                'text-black',
                 { 'bg-primary-50 dark:bg-primary-400/30 text-primary-600 dark:text-surface-0': context.selected },
 
                 // States
@@ -156,8 +156,8 @@ export default {
                 // Colors
                 'bg-transparent',
                 {
-                    'text-surface-500 dark:text-white': !context.selected,
-                    'text-primary-600 dark:text-white': context.selected,
+                    'text-black dark:text-white': !context.selected,
+                    'text-black dark:text-white': context.selected,
                     invisible: context.leaf
                 },
 
@@ -336,7 +336,7 @@ export default {
                 'absolute top-1/2 -mt-2 right-3',
 
                 // Color
-                'text-surface-600 dark:hover:text-white/70'
+                'text-black'
             ]
         }
     },

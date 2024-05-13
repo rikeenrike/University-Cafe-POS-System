@@ -47,7 +47,7 @@ export default {
 
             // Colors
             {
-                'border-surface-200 bg-surface-0 dark:border-surface-700 dark:bg-surface-900': !context.active && !props.invalid,
+                'border-surface-200 bg-white dark:border-surface-700 dark:bg-surface-900 ': !context.active && !props.invalid,
                 'border-primary bg-primary ': context.active
             },
 
@@ -77,7 +77,7 @@ export default {
             'h-4',
 
             // Colors
-            'text-white dark:text-surface-900',
+            'text-black dark:text-surface-900',
 
             // Transitions
             'transition-all',
@@ -94,7 +94,7 @@ export default {
             'h-4',
 
             // Colors
-            'text-white dark:text-surface-900',
+            'text-black dark:text-surface-900',
 
             // Transitions
             'transition-all',

@@ -20,7 +20,6 @@ const saveEdit = async () => {
         const response = await axios.put(`http://127.0.0.1:8000/api/product_sub_category_edit/${subData.value.SubCateID}/${subData.value.SubCategory}`);
         if (response) {
             const data = await response.data;
-            console.log(data);
             toast.add({ severity: 'success', summary: 'Subcategory Added!', detail: 'Subcategory has been successfully added', group: 'bc', life: 2000 });
         } else {
             throw new Error('Request failed');
@@ -43,8 +42,10 @@ const disableItem = () => {
                 const response = await axios.put(`http://127.0.0.1:8000/api/product_sub_cutegory/disable/${subData.value.SubCateID}`);
                 if (response) {
                     const data = await response.data;
-                    console.log(data);
                     toast.add({ severity: 'success', summary: 'Item Disabled!', detail: 'Item has been successfully disabled', group: 'bc', life: 2000 });
+
+                    subData.value.isDisabled = true;
+
                 } else {
                     throw new Error('Request failed');
                 }
@@ -73,8 +74,9 @@ const reenableItem = () => {
                 const response = await axios.put(`http://127.0.0.1:8000/api/product_sub_category/enable/${subData.value.SubCateID}`);
                 if (response) {
                     const data = await response.data;
-                    console.log(data);
                     toast.add({ severity: 'success', summary: 'Item Re-enabled!', detail: 'Item has been successfully re-enabled', group: 'bc', life: 2000 });
+
+                    subData.value.isDisabled = false;
                 } else {
                     throw new Error('Request failed');
                 }

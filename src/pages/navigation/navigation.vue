@@ -20,12 +20,12 @@ const toggleBasket = () => {
 
 const menu1 = ref();
 const menu2 = ref();
+const menu3 = ref();
 
 const menu1Items  = ref([
     {
         label: "Logout",
         command: async () => {
-            console.log("logout");
             try {
                 const response = await axios.post(`http://127.0.0.1:8000/api/accounts/logout`, {
                     withCredentials: true
@@ -59,6 +59,22 @@ const menu2Items  = ref([
     }
 ]);
 
+const menu3Items = ref ([
+    {
+        label: "Orders",
+        command: () => {
+            router.push("/kitchen/orders");
+        },
+    },
+    {
+        label: "Cancelled Online Orders",
+        command: () => {
+            router.push("/kitchen/cancelled-orders");
+        },
+    },
+])
+
+
 
 const showMenu1 = (event) => {
     // Access menu1 instance using ref
@@ -70,6 +86,11 @@ const showMenu2 = (event) => {
     menu2.value.toggle(event);
 };
 
+const showMenu3 = (event) => {
+    // Access menu3 instance using ref
+    menu3.value.toggle(event);
+};
+
 const name = ref('')
 
 const accessname = async () => {
@@ -79,7 +100,6 @@ const accessname = async () => {
         });
         const data = await response.data;
         if (data) {
-            console.log(data);
             name.value = data.Name;
         }
     } catch (error) {
@@ -105,8 +125,9 @@ onMounted(() => {
                     <span class="hidden md:flex cursor-pointer  pl-0 lg:pl-10 space-x-4  text-darkgrey">
                         <router-link to="/cashier" active-class="text-black"
                             class="hover:text-black duration-100">Cashier</router-link>
-                        <router-link to="/kitchen" active-class="text-black"
-                            class="hover:text-black duration-100">Kitchen</router-link>
+                        <p class="hover:text-black duration-100" @click="showMenu3">Kitchen
+                            <Menu ref="menu3" :model="menu3Items" :popup="true" />
+                        </p>
                         <router-link to="/menu-management" active-class="text-black"
                             class="hover:text-black duration-100">Menu Management</router-link>
                         <p class="hover:text-black duration-100" @click="showMenu2">Sales
@@ -151,7 +172,7 @@ onMounted(() => {
                         <span class="inline-flex font-sora items-center gap-1 px-2 py-2 w-full">
                             <span class="font-medium text-lg    ">Welcome,
                                 <span class="text-primary">{{ name }}</span>
-                        </span>
+                            </span>
                         </span>
                     </template>
                 </Menu>

@@ -8,6 +8,16 @@ const routes = [
     component: () => import("/src/pages/login/login.vue"),
   },
   {
+    name:"ForgotPassword",
+    path: "/forgot-password",
+    component: () => import("/src/pages/login/forgotpassword.vue"),
+  },
+  {
+    name: "Register",
+    path: "/register",
+    component: () => import("/src/pages/sign-up/signup.vue"),
+  },
+  {
     path: "/cashier",
     component: () => import("/src/pages/cashier/cashier.vue"),
     redirect: "/cashier/menu/drinks",
@@ -34,10 +44,28 @@ const routes = [
   {
     path: "/kitchen",
     name: "Kitchen",
-    component: () => import("/src/pages/kitchen/kitchen.vue"),
+    components: {
+      default: () => import("/src/pages/kitchen/kitchen.vue"),
+      orders: () => import("/src/pages/kitchen/kitchenOrders.vue"),
+      cancel: () => import("/src/pages/kitchen/kitchenCancelled.vue"),
+    },
     meta: {
       requiresAuth: true,
     },
+    children: [
+      {
+        path: "orders",
+        components: {
+          orders: () => import("/src/pages/kitchen/kitchenOrders.vue"),
+        },
+      },
+      {
+        path: "cancelled-orders",
+        components: {
+          cancel: () => import("/src/pages/kitchen/kitchenCancelled.vue"),
+        },
+      },
+    ],
   },
   {
     path: "/menu-management",
@@ -81,7 +109,7 @@ const routes = [
       {
         path: "sales",
         components: {
-          sales: () => import("/src/pages/reports/reports_sales.vue"),
+        sales: () => import("/src/pages/reports/reports_sales.vue"),
         },
       },
       {

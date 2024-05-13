@@ -31,6 +31,8 @@ const authUser = async () => {
         const data = await response.data;
         if (data) {
             toast.add({ severity: "success", summary: "Success", detail: "Login Successful", group: 'bc', life: 2000 });
+            email.value = '';
+            password.value = '';
             router.push('/cashier')
         }else{
             toast.add({ severity: "error", summary: "Error", detail: "Invalid Credentials", group: 'bc', life: 2000 });
@@ -40,8 +42,6 @@ const authUser = async () => {
         console.error(error)
     } finally {
         loading.value = false
-        email.value = '';
-        password.value = '';
     }
 }
 </script>
@@ -69,15 +69,21 @@ const authUser = async () => {
                 <Button label="Primary" @click="authUser"
                     class="text-[15px] font-regular text-white bg-primary active:bg-accent w-full h-[45px]">Log
                     in</Button>
+                <div @click="router.push('/forgot-password')">
+                    <label for="password"
+                        class="text-[15px] font-regular text-darkgrey hover:underline cursor-pointer">Forgot
+                        Password?</label>
+                </div>
             </div>
-            <!-- <div class="border-t-[2px] border-darkwhite">
+            <div class="border-t-[2px] border-darkwhite">
                 <div class="flex items-center justify-between pt-5">
                     <p>Don't have an account?</p>
-                    <Button label="Primary" class="h-[40px] gap-2 border-2 text-black active:bg-secondary ">
+                    <Button @click="router.push('/register')" label="Primary"
+                        class="h-[40px] gap-2 border-2 text-black active:bg-secondary ">
                         <p class="text-black">Sign up</p>
                     </Button>
                 </div>
-            </div> -->
+            </div>
         </div>
     </div>
 </template>

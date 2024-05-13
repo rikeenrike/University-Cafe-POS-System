@@ -28,6 +28,7 @@ import InputSwitch from 'primevue/inputswitch';
 import Calendar from 'primevue/calendar';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
+import TreeSelect from 'primevue/treeselect';
 
 
 const app = createApp(App);
@@ -36,6 +37,7 @@ app.use(PrimeVue, {
   pt: Lara,
 });
 app.use(router);
+app.component("TreeSelect", TreeSelect);
 app.component("Column", Column);
 app.component("DataTable", DataTable);
 app.component("Calendar", Calendar);

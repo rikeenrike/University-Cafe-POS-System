@@ -50,7 +50,7 @@ onMounted(() => {
           <div v-if="readyOrders.length" class="flex flex-row whitespace-nowrap gap-5 overflow-x-scroll overflow-auto">
             <div v-for="ready in readyOrders" :key="ready.TransID"
               class="p-3 w-[256px] h-[99px] bg-accent rounded-[15px] text-offwhite ">
-              <p v-if="ready.Alias !== null" class="text-[24px] font-bold">{{ ready.Alias }}</p>
+              <p v-if="ready.Alias !== ''" class="text-[24px] font-bold">{{ ready.Alias }}</p>
               <p v-else class="text-[24px] font-bold">{{ ready.FirstName + ' ' + ready.LastName }}</p>
               <p class="text-[16px] font-light">Order#{{ ready.TransID }}</p>
             </div>
@@ -71,7 +71,7 @@ onMounted(() => {
             class="flex flex-row whitespace-nowrap gap-5 overflow-x-scroll overflow-y-hidden">
             <div v-for="ongoing in ongoingOrders" :key="ongoing.TransID"
               class="p-3 w-[256px] h-[99px] bg-secondary rounded-[15px] text-accent">
-              <p v-if="ongoing.Alias !== null" class="text-[24px] font-bold">{{ ongoing.Alias }}</p>
+              <p v-if="ongoing.Alias !== ''" class="text-[24px] font-bold">{{ ongoing.Alias }}</p>
               <p v-else class="text-[24px] font-bold">{{ ongoing.FirstName + ' ' + ongoing.LastName }}</p>
               <p class="text-[16px] font-light">Order#{{ ongoing.TransID }}</p>
             </div>

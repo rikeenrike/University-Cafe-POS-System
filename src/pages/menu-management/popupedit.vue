@@ -15,12 +15,21 @@ let image = ref(null);
 
 const insertImage = (e) => {
     image = e.target.files[0];
-    console.log(image)
 }
 
+const checkInput = () => {
+    if (itemData.value.ProductName === "" || itemData.value.UnitPrice === null || itemData.value.Stock === null) {
+        isInputValid.value = true;
+        toast.add({ severity: "error", summary: "Error", detail: "Please fill in all fields", group: 'bc', life: 2000 });
+        return;
+    } else {
+        isInputValid.value = false;
+        saveeditItem();
+    }
+}
 
 const saveeditItem = async () => {
-    if (itemData.value.ProductName === "" || itemData.value.UnitPrice === "" || itemData.value.Stock === "") {
+    if (itemData.value.ProductName === "" || itemData.value.UnitPrice === null || itemData.value.Stock === null) {
         isInputValid.value = true;
         toast.add({ severity: "error", summary: "Error", detail: "Please fill in all fields", group: 'bc', life: 2000 });
         return;
@@ -29,8 +38,7 @@ const saveeditItem = async () => {
     }
     loading.value = true
 
-
-
+    console.log(itemData.value)
 
     try {
 
@@ -38,7 +46,6 @@ const saveeditItem = async () => {
             
         if (response) {
             const data = await response.data;
-            console.log(data);
             toast.add({ severity: 'success', summary: 'Item Saved!', detail: 'Item has been successfully edited', group: 'bc', life: 2000 });
 
         } else {
@@ -50,12 +57,12 @@ const saveeditItem = async () => {
             const formData = new FormData();
             formData.append('ProductID', itemData.value.ProductID);
             formData.append('image', image);
-            console.log(formData);
-            await axios.put('http://127.0.0.1:8000/api/products/image/add', formData, {
+            const imagevalue = await axios.put('http://127.0.0.1:8000/api/products/image/add', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
+            itemData.value.image = imagevalue.data;
         }
 
     } catch (error) {
@@ -79,8 +86,9 @@ const disableItem = () => {
                 const response = await axios.put(`http://127.0.0.1:8000/api/products/disable/${itemData.value.ProductID}`);
                 if (response) {
                     const data = await response.data;
-                    console.log(data);
                     toast.add({ severity: 'success', summary: 'Item Disabled!', detail: 'Item has been successfully disabled', group: 'bc', life: 2000 });
+
+                    itemData.value.isDisabled = true;
                 } else {
                     throw new Error('Request failed');
                 }
@@ -109,8 +117,8 @@ const reenableItem = () => {
                 const response = await axios.put(`http://127.0.0.1:8000/api/products/enable/${itemData.value.ProductID}`);
                 if (response) {
                     const data = await response.data;
-                    console.log(data);
                     toast.add({ severity: 'success', summary: 'Item Re-enabled!', detail: 'Item has been successfully re-enabled', group: 'bc', life: 2000 });
+                    itemData.value.isDisabled = false;
                 } else {
                     throw new Error('Request failed');
                 }
@@ -135,8 +143,7 @@ const reenableItem = () => {
         <div v-if="loading" class="fixed z-20 -top-[1px]  w-full h-full">
             <ProgressBar mode="indeterminate" style="height: 6px"></ProgressBar>
         </div>
-        <div @click="ClosePopup('.edit', '.editwrapper'); isInputValid = false"
-            class=" fixed h-screen w-screen flex-grow hidden sm:block">
+        <div @click="checkInput();" class=" fixed h-screen w-screen flex-grow hidden sm:block">
         </div>
         <div class="py-5 hidden sm:flex">
             <div
@@ -144,8 +151,7 @@ const reenableItem = () => {
                 <!-- TOP ------------------------------------------------>
                 <div class="flex items-center justify-between border-b-2 px-10 py-5">
                     <h1 class="font-bold text-[24px]">Edit Item</h1>
-                    <Button label="Primary" @click="ClosePopup('.edit', '.editwrapper'); isInputValid = false"
-                        class="bg-white hover:bg-offwhite duration-400">
+                    <Button label="Primary" @click="checkInput();" class="bg-white hover:bg-offwhite duration-400">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor" class="w-6 h-6 text-black">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -159,7 +165,7 @@ const reenableItem = () => {
                             class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover object-center">
                         <img v-else :src="'data:image/png;base64,' + itemData.image" alt="test"
                             class="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover object-center">
-                        <div class="flex items-center space-x-1" @click="insertImage">
+                        <div class="flex items-center space-x-1">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" class="w-[20px] h-[20px]">
                                 <path stroke-linecap="round" stroke-linejoin="round"
